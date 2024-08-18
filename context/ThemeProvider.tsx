@@ -10,24 +10,59 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState("");
+  const [theme, setTheme] = useState<string>("");
 
-  const handleThemeChange = () => {
-    if (theme === "light") {
-      setTheme("dark");
-      document.documentElement.classList.add("dark");
-    } else {
-      setTheme("light");
-      document.documentElement.classList.add("light");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Check if running in the browser
+      const storedTheme = localStorage.getItem("theme");
+      if (storedTheme) {
+        setTheme(storedTheme);
+        if (storedTheme === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      } else {
+        const prefersDarkMode = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        setTheme(prefersDarkMode ? "dark" : "light");
+        if (prefersDarkMode) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      }
+    }
+  }, []);
+
+  const setThemeAndPersist = (newTheme: string) => {
+    setTheme(newTheme);
+    if (typeof window !== "undefined") {
+      if (newTheme === "dark") {
+        localStorage.setItem("theme", "dark");
+        document.documentElement.classList.add("dark");
+      } else if (newTheme === "light") {
+        localStorage.setItem("theme", "light");
+        document.documentElement.classList.remove("dark");
+      } else {
+        localStorage.removeItem("theme");
+        const prefersDarkMode = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        setTheme(prefersDarkMode ? "dark" : "light");
+        if (prefersDarkMode) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      }
     }
   };
 
-  useEffect(() => {
-    handleThemeChange();
-  }, [theme]);
-
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme: setThemeAndPersist }}>
       {children}
     </ThemeContext.Provider>
   );
