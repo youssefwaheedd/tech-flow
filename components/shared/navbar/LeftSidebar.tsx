@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 const LeftSidebar = () => {
   const pathname = usePathname();
   return (
-    <section className="background-light900_dark200 shadow-light-300 custom-scrollbar sticky left-0 top-0 flex h-screen w-[18%] min-w-32 flex-col justify-between gap-3 overflow-y-auto p-6 pt-36 max-lg:w-[12%] max-lg:items-center max-sm:hidden dark:shadow-none">
+    <section className="background-light900_dark200 light-border-2 border-r shadow-light-300 custom-scrollbar sticky left-0 top-0 flex h-screen w-[18%] min-w-32 flex-col justify-between gap-3 overflow-y-auto p-6 pt-36 max-lg:w-[12%] max-lg:items-center max-sm:hidden dark:shadow-none">
       <div className="flex flex-1 flex-col gap-6">
         {sidebarLinks.map((link, index) => {
           const isActive =

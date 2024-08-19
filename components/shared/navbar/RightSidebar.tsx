@@ -79,7 +79,7 @@ const RightSidebar = () => {
   ];
 
   return (
-    <section className="background-light900_dark200 text-dark300_light900 shadow-light-300 custom-scrollbar sticky right-0 top-0 flex min-h-screen w-[350px] min-w-32 flex-col overflow-y-auto px-6 pt-36 max-xl:hidden dark:shadow-none">
+    <section className="background-light900_dark200 light-border-2 border-l text-dark300_light900 shadow-light-300 custom-scrollbar sticky right-0 top-0 flex min-h-screen w-[350px] min-w-32 flex-col overflow-y-auto px-6 pt-36 max-xl:hidden dark:shadow-none">
       <div>
         <h3 className="h3-bold">Top Questions</h3>
         <div className="mt-7 flex w-full flex-col gap-[30px]">
