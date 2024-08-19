@@ -22,7 +22,7 @@ import { Badge } from "../ui/badge";
 
 const Question = () => {
   const editorRef = useRef(null);
-
+  const inputRef = useRef<HTMLInputElement>(null);
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
@@ -42,6 +42,24 @@ const Question = () => {
   const handleTagRemove = (tag: string, field: any) => {
     const newTags = field.value.filter((t: string) => t !== tag);
     form.setValue("tags", newTags);
+  };
+
+  const handleAddTag = (tagInputValue: string, field: any) => {
+    const tagValue = tagInputValue.trim();
+
+    if (tagValue !== "") {
+      if (tagValue.length > 15) {
+        return form.setError("tags", {
+          type: "required",
+          message: "Tag should not be more than 15 characters",
+        });
+      }
+
+      if (!field.value.includes(tagValue as never)) {
+        form.setValue("tags", [...field.value, tagValue]);
+        form.clearErrors("tags");
+      }
+    }
   };
 
   const handleKeyDown = (
@@ -160,19 +178,33 @@ const Question = () => {
               </FormLabel>
               <FormMessage className="text-red-500" />
               <FormControl className="mt-3.5">
-                <>
-                  <Input
-                    placeholder="Add tags..."
-                    className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-                    onKeyDown={(e) => handleKeyDown(e, field)}
-                  />
+                <div className="flex flex-col">
+                  <div className="flex gap-1">
+                    <Input
+                      ref={inputRef}
+                      placeholder="Add tags..."
+                      className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                      onKeyDown={(e) => handleKeyDown(e, field)}
+                    />
+                    <Button
+                      onClick={() => {
+                        if (inputRef.current) {
+                          handleAddTag(inputRef.current.value, field);
+                          inputRef.current.value = ""; // Clear the input after adding the tag
+                        }
+                      }}
+                      className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                    >
+                      Add
+                    </Button>
+                  </div>
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 gap-2.5 flex-wrap">
                       {field.value.map((tag) => (
                         <Badge
                           key={tag}
                           onClick={() => handleTagRemove(tag, field)}
-                          className="text-xs background-light800_dark300  text-light400_light500  flex items-center gap-2 justify-center rounded-md border-none py-2 px-4 capitalize"
+                          className="text-xs background-light800_dark300 text-light400_light500 flex items-center gap-2 justify-center rounded-md border-none py-2 px-4 capitalize"
                         >
                           {tag}
                           <Image
@@ -186,11 +218,11 @@ const Question = () => {
                       ))}
                     </div>
                   )}
-                </>
+                </div>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Add up to 3 tags to describe what your question is about. You
-                need to press enter to add a tag.
+                can just press 'Enter' to add a tag.
               </FormDescription>
             </FormItem>
           )}
