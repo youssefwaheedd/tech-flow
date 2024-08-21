@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-custom-classname */
 /* eslint-disable no-unused-vars */
 
 import HomeFilters from "@/components/home/HomeFilters";

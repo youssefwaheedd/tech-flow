@@ -130,7 +130,7 @@ export interface GetAllUsersParams {
 }
 
 export interface UpdateUserParams {
-  clerkId: string;
+  clerkID: string;
   updateData: Partial<IUser>;
   path: string;
 }
@@ -156,5 +156,5 @@ export interface GetUserStatsParams {
 }
 
 export interface DeleteUserParams {
-  clerkId: string;
+  clerkID: string;
 }
