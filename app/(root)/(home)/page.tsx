@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import HomeFilters from "@/components/home/HomeFilters";
 import QuestionCard from "@/components/cards/QuestionCard";
 import { Filters } from "@/components/shared/Filters";
@@ -6,59 +8,14 @@ import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
+import { getQuestions } from "@/lib/actions/question.action";
+import { useRouter } from "next/router";
 
-const questions = [
-  {
-    _id: "1",
-    title: "How to use React Query in Next.js?",
-    tags: [
-      {
-        _id: 1,
-        name: "reat-query",
-      },
-      {
-        _id: 2,
-        name: "next.js",
-      },
-    ],
-    upvotes: 5,
-    answers: [{}], // Assuming each answer is an object, you can define the actual structure
-    views: 1100,
-    author: {
-      _id: "1",
-      name: "Ahmedwahidd",
-      avatar: "/assets/icons/avatar.svg",
-    },
-    createdAt: new Date("2024-08-19T18:22:05.935Z"),
-    community: "Next.js Community",
-  },
-  {
-    _id: "2",
-    title: "How to center a div?",
-    tags: [
-      {
-        _id: 1,
-        name: "css",
-      },
-      {
-        _id: 2,
-        name: "next.js",
-      },
-    ],
-    upvotes: 3,
-    answers: [{}], // Assuming each answer is an object, you can define the actual structure
-    views: 20,
-    author: {
-      _id: "2",
-      name: "Youssefwahidd",
-      avatar: "/assets/icons/avatar.svg",
-    },
-    createdAt: new Date("2021-09-10T10:00:00.000Z"),
-    community: "CSS Community",
-  },
-];
+import { useUser } from "@clerk/nextjs";
 
-export default function Home() {
+export default async function Home() {
+  const result: any = await getQuestions({});
+
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center">
@@ -87,8 +44,8 @@ export default function Home() {
         <HomeFilters />
       </div>
       <div className="mt-10 flex w-full flex-col gap-[24px]">
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        {result.questions?.length > 0 ? (
+          result.questions?.map((question: any) => (
             <QuestionCard
               _id={question._id}
               key={question._id}
@@ -98,7 +55,7 @@ export default function Home() {
               upvotes={question.upvotes}
               answers={question.answers}
               views={question.views}
-              tags={question.tags.map((tag) => tag)}
+              tags={question.tags.map((tag: []) => tag)}
             />
           ))
         ) : (

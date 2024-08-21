@@ -10,7 +10,7 @@ interface Props {
   author: { _id: string; name: string; avatar: string };
   title: string;
   createdAt: Date;
-  upvotes: number;
+  upvotes: Array<object>;
   community?: string;
   answers: Array<object>;
   views: number;
@@ -66,8 +66,8 @@ const QuestionCard: React.FC<Props> = ({
             <Metric
               imgUrl="/assets/icons/like.svg"
               alt="upvotes"
-              value={formatNumber(upvotes)}
-              title={` ${upvotes === 1 ? "Vote" : "Votes"} `}
+              value={formatNumber(upvotes.length)}
+              title={` ${upvotes.length === 1 ? "Vote" : "Votes"} `}
               textStyles=" small-medium text-dark400_light800"
             />
             <Metric

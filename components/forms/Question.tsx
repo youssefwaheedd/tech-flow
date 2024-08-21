@@ -6,6 +6,7 @@ import Image from "next/image";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter, usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,10 +20,21 @@ import {
 } from "@/components/ui/form";
 import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
+import { createQuestion } from "@/lib/actions/question.action";
 
-const Question = () => {
+interface Props {
+  mongoUserId: string;
+}
+
+const Question = ({ mongoUserId }: Props) => {
+  const pathname = usePathname();
+  const router = useRouter();
+  const type: any = "create";
   const editorRef = useRef(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
@@ -32,11 +44,23 @@ const Question = () => {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof QuestionsSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
+    setIsSubmitting(true);
+    try {
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId),
+        path: pathname,
+      });
+
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const handleTagRemove = (tag: string, field: any) => {
@@ -108,7 +132,7 @@ const Question = () => {
                   {...field}
                 />
               </FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
+              <FormDescription className="body-regular text-light-500 mt-2.5">
                 Be specific and imagine you&apos;re asking a question to another
                 person
               </FormDescription>
@@ -132,6 +156,8 @@ const Question = () => {
                     // @ts-ignore
                     (editorRef.current = editor)
                   }
+                  onBlur={field.onBlur}
+                  onEditorChange={(content) => field.onChange(content)}
                   initialValue=""
                   init={{
                     height: 350,
@@ -161,7 +187,7 @@ const Question = () => {
                   }}
                 />
               </FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
+              <FormDescription className="body-regular text-light-500 mt-2.5">
                 Introduce your problem in detail. Include all the information.
                 Min 20 Characters
               </FormDescription>
@@ -187,6 +213,7 @@ const Question = () => {
                       onKeyDown={(e) => handleKeyDown(e, field)}
                     />
                     <Button
+                      type="button"
                       onClick={() => {
                         if (inputRef.current) {
                           handleAddTag(inputRef.current.value, field);
@@ -199,12 +226,12 @@ const Question = () => {
                     </Button>
                   </div>
                   {field.value.length > 0 && (
-                    <div className="flex-start mt-2.5 gap-2.5 flex-wrap">
+                    <div className="flex-start mt-2.5 flex-wrap gap-2.5">
                       {field.value.map((tag) => (
                         <Badge
                           key={tag}
                           onClick={() => handleTagRemove(tag, field)}
-                          className="text-xs background-light800_dark300 text-light400_light500 flex items-center gap-2 justify-center rounded-md border-none py-2 px-4 capitalize"
+                          className="background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 text-xs capitalize"
                         >
                           {tag}
                           <Image
@@ -220,14 +247,24 @@ const Question = () => {
                   )}
                 </div>
               </FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
+              <FormDescription className="body-regular text-light-500 mt-2.5">
                 Add up to 3 tags to describe what your question is about. You
-                can just press 'Enter' to add a tag.
+                can just press Enter to add a tag.
               </FormDescription>
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button
+          type="submit"
+          className="primary-gradient !text-light-900 w-fit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>{type === "edit" ? "Editing..." : "Posting..."}</>
+          ) : (
+            <>{type === "edit" ? "Edit Question" : "Ask a Question"}</>
+          )}
+        </Button>
       </form>
     </Form>
   );
