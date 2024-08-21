@@ -11,7 +11,6 @@ import { CreateQuestionParams, GetQuestionsParams } from "./shared.types";
 export async function createQuestion(params: CreateQuestionParams) {
   try {
     const { title, content, tags, author, path } = params;
-    console.log(author);
     connectToDatabase();
     const question = await Question.create({
       title,
