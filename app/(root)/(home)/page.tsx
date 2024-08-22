@@ -10,9 +10,6 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import { getQuestions } from "@/lib/actions/question.action";
-import { useRouter } from "next/router";
-
-import { useUser } from "@clerk/nextjs";
 
 export default async function Home() {
   const result: any = await getQuestions({});
