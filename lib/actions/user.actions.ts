@@ -9,7 +9,8 @@ import {
   GetAllUsersParams,
   UpdateUserParams,
 } from "./shared.types";
-import Question from "../models/question.model";
+import Question, { IQuestion } from "../models/question.model";
+import Tag from "../models/tag.model";
 
 export const getUsers = async (params: GetAllUsersParams) => {
   // const { page = 1, pageSize = 20, filter, searchQuery } = params;
@@ -48,30 +49,6 @@ export const updateUser = async (params: UpdateUserParams) => {
   }
 };
 
-export const deleteUser = async (params: DeleteUserParams) => {
-  try {
-    connectToDatabase();
-    const user = await User.findOne({ clerkID: params.clerkID });
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    // delete all user related data
-    // const userQuestionsIds = await Question.find({ author: user._id }).distinct(
-    //   "_id"
-    // );
-    await Question.deleteMany({ author: user._id });
-
-    // delete user answers comments and more
-    const deletedUser = await User.findOneAndDelete({
-      clerkID: params.clerkID,
-    });
-    return deletedUser;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export const getUserById = async (userId: string) => {
   try {
     connectToDatabase();
@@ -79,5 +56,34 @@ export const getUserById = async (userId: string) => {
     return user;
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const deleteUser = async (params: DeleteUserParams) => {
+  try {
+    await connectToDatabase();
+
+    const user = await User.findOne({ clerkID: params.clerkID });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Get all question IDs related to the user
+    // const userQuestionsIds = await Question.find({ author: user._id }).distinct(
+    //   "_id"
+    // );
+
+    // Delete user questions
+    await Question.deleteMany({ author: user._id });
+
+    // Delete the user and other associated data
+    const deletedUser = await User.findOneAndDelete({
+      clerkID: params.clerkID,
+    });
+
+    return deletedUser;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error; // Re-throw the error for higher-level handling
   }
 };

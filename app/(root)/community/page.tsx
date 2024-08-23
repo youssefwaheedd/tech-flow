@@ -26,7 +26,7 @@ const Page = async () => {
       <h1 className="text-dark300_light900 h1-bold self-start">All Users</h1>
       <div className="max-xs:flex-col mt-11 flex items-center justify-between gap-5 max-md:flex-row">
         <LocalSearch
-          route="/"
+          route="/community"
           placeholder="Search for amazing minds here..."
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
@@ -38,14 +38,14 @@ const Page = async () => {
           containerClasses="flex max-xs:w-full"
         />
       </div>
-      <section className="mt-11 flex flex-wrap items-center justify-start gap-4">
+      <section className="mt-11 flex flex-wrap items-center justify-center gap-4 sm:justify-start">
         {plainUsers?.length ? (
           plainUsers.map((user) => <UserCard key={user._id} user={user} />)
         ) : (
           <NoResult
             title="No users found"
             description="No users found, be the first to join our community!"
-            buttonHref="sign-up"
+            buttonHref="/sign-up"
             buttonTitle="Join now!"
           />
         )}

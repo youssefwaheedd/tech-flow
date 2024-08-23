@@ -4,13 +4,49 @@
 import { connectToDatabase } from "../database";
 import Tag from "../models/tag.model";
 import User from "../models/user.model";
-import { GetTopInteractedTagsParams } from "./shared.types";
+import { GetAllTagsParams, GetTopInteractedTagsParams } from "./shared.types";
 
 const tempTags = [
   { _id: 1, name: "react" },
   { _id: 2, name: "nextjs" },
   { _id: 3, name: "javascript" },
 ];
+
+export async function getAllTags(params: GetAllTagsParams) {
+  try {
+    await connectToDatabase();
+
+    // Use aggregation to sort by the length of the questions array
+    const tags = await Tag.aggregate([
+      {
+        $addFields: {
+          questionsCount: { $size: "$questions" },
+        },
+      },
+      {
+        $sort: { questionsCount: -1 },
+      },
+    ]);
+
+    return { tags };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getTagById(tagId: string) {
+  try {
+    connectToDatabase();
+    const tag = await Tag.findById(tagId).populate({
+      path: "questions",
+      model: "Question",
+    });
+    return tag;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
     // connectToDatabase();
