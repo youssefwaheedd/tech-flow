@@ -4,9 +4,9 @@ import Link from "next/link";
 
 interface MetricProps {
   imgUrl: string;
-  title: string;
+  title?: string;
   alt: string;
-  value: number | string;
+  value?: number | string;
   textStyles?: string;
   href?: string;
   isAuthor?: boolean;

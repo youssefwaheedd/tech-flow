@@ -43,7 +43,7 @@ const UserCard = ({ user }: Props) => {
   return (
     <Link
       href={`/profile/${user.clerkID}`}
-      className="background-light900_dark200 light-border-2 shadow-light100_dark100 text-dark300_light900 flex flex-col items-center gap-3 rounded-lg p-5 sm:min-w-[320px]"
+      className="background-light900_dark200 light-border-2 shadow-light100_dark100 text-dark300_light900 flex w-full flex-col items-center gap-3 rounded-lg p-5  sm:max-w-[320px]"
     >
       <Image
         src={user.avatar}
@@ -54,15 +54,17 @@ const UserCard = ({ user }: Props) => {
       />
       <p className="h3-bold line-clamp-1">{user.name}</p>
       <p>@{user.username}</p>
-      <div className="line-clamp-1 flex items-center gap-3">
+      <div className="flex w-full items-center justify-center gap-3">
         {userTopInteractedTags.length ? (
           userTopInteractedTags.map((tag: any) => (
-            <RenderTag
-              key={tag._id}
-              _id={tag._id}
-              name={tag.name}
-              showCount={false}
-            />
+            <div key={tag._id} className="line-clamp-1 w-20">
+              <RenderTag
+                key={tag._id}
+                _id={tag._id}
+                name={tag.name}
+                showCount={false}
+              />
+            </div>
           ))
         ) : (
           <Badge>No tags yet</Badge>

@@ -59,3 +59,18 @@ export async function getQuestions(params: GetQuestionsParams) {
     console.error(error);
   }
 }
+
+export async function getQuestionById(questionId: string) {
+  try {
+    connectToDatabase();
+    const question = await Question.findById(questionId)
+      .populate({
+        path: "author",
+        model: User,
+      })
+      .populate({ path: "tags", model: Tag });
+    return question;
+  } catch (error) {
+    console.error(error);
+  }
+}
