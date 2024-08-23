@@ -60,7 +60,7 @@ const QuestionCard: React.FC<Props> = ({
             title={` - asked ${createdAtValue} ${dateFormat}${createdAtValue > 1 ? "s" : ""} ago`}
             href={`/profile/${author._id}`}
             isAuthor
-            textStyles=" body-medium text-dark400_light700"
+            textStyles=" small-medium text-dark400_light700"
           />
           <div className="flex gap-2">
             <Metric

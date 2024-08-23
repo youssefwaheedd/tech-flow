@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -28,19 +28,19 @@ const Metric = ({
         alt={alt}
         width={16}
         height={16}
-        className={`invert-colors object-contain ${href ? "rounded-full" : ""}`}
+        className={`${!href ? "invert-colors" : ""} object-contain ${href ? "rounded-full" : ""}`}
       />
       <p className={`${textStyles} flex items-center gap-1`}>
         {value}
 
-        <span className="body-regular line-clamp-1 ">{title}</span>
+        <span className="small-medium line-clamp-1 ">{title}</span>
       </p>
     </>
   );
 
   if (href) {
     return (
-      <Link href={href} className="flex-center gap-1">
+      <Link href={href} className="flex-center gap-2">
         {metricContent}
       </Link>
     );
