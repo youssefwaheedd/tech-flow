@@ -9,7 +9,7 @@ const isPublicRoute = createRouteMatcher([
   "tags",
   "tags/:id",
   "/profile/:id",
-  "community",
+  "/community",
   "/jobs",
 ]);
 const isIgnoredRoute = createRouteMatcher(["/api/webhooks", "/api/chatgpt"]);

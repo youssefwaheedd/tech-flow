@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use serveer";
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../database";
@@ -5,15 +6,17 @@ import User from "../models/user.model";
 import {
   CreateUserParams,
   DeleteUserParams,
+  GetAllUsersParams,
   UpdateUserParams,
 } from "./shared.types";
 import Question from "../models/question.model";
 
-export const getUsers = async () => {
+export const getUsers = async (params: GetAllUsersParams) => {
+  // const { page = 1, pageSize = 20, filter, searchQuery } = params;
   try {
     connectToDatabase();
-    const users = await User.find({});
-    return users;
+    const users = await User.find({}).sort({ joinedAt: -1 });
+    return { users };
   } catch (error) {
     console.error(error);
   }
