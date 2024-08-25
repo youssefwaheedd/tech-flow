@@ -1,6 +1,6 @@
 /* General code block styles (without language specification) */
 code {
-  background-color: #030314; /* Dark background from Holi theme */
+  background-color: #16164a; /* Dark background from Holi theme */
   color: #d6e7ff; /* Light text color from Holi theme */
   padding: 8px;
   border-radius: 3px;
@@ -13,15 +13,16 @@ pre code {
   display: block;
   padding: 1rem;
   margin: 1.5rem auto;
+  height: auto;
   overflow-x: auto; /* Allow horizontal scrolling */
   overflow-y: hidden; /* Hide vertical scrolling if not needed */
   line-height: 1.5;
   max-width: 70vw; /* Responsive width */
   min-width: 300px;
-  background-color: #030314; /* Dark background */
+  background-color: #030314; /* Consistent dark background */
   color: #d6e7ff; /* Light text color */
   border-radius: 1.5px;
-  white-space: nowrap; /* Prevent wrapping to create a scrollbar */
+  white-space: pre-wrap; /* Allow wrapping and respect line breaks */
   cursor: default; /* Default cursor for normal behavior */
 }
 
@@ -46,11 +47,12 @@ pre code::-webkit-scrollbar-thumb {
 /* PrismJS theme styles */
 pre[class*="language-"] {
   overflow: auto;
-  background: #030314; /* Consistent dark background */
+  background: #030314; /* Consistent dark background from Holi theme */
   border: 1px solid #2a4555; /* Border similar to Holi theme */
   border-radius: 5px;
   padding: 1.5em 1em;
   margin: 1em 0;
+  white-space: pre-wrap; /* Allow wrapping in language-specific code blocks */
 }
 
 code[class*="language-"],
@@ -60,10 +62,9 @@ pre[class*="language-"] {
   font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono",
     monospace;
   text-align: left;
-  white-space: pre;
+  white-space: pre-wrap; /* Allow wrapping and respect line breaks */
   word-spacing: normal;
   word-break: normal;
-  word-wrap: normal;
   line-height: 1.5;
   box-sizing: border-box;
 }

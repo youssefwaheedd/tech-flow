@@ -16,6 +16,8 @@ export interface IUser extends Document {
   answers: mongoose.Schema.Types.ObjectId[];
   upvotes: mongoose.Schema.Types.ObjectId[];
   downvotes: mongoose.Schema.Types.ObjectId[];
+  upvotedAnswers: mongoose.Schema.Types.ObjectId[];
+  downvotedAnswers: mongoose.Schema.Types.ObjectId[];
 }
 
 const UserSchema = new mongoose.Schema({
@@ -84,6 +86,18 @@ const UserSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Question",
+    },
+  ],
+  upvotedAnswers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Answer",
+    },
+  ],
+  downvotedAnswers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Answer",
     },
   ],
 });

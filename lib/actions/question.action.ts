@@ -10,6 +10,9 @@ import {
   CreateQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
+  GetSavedQuestionsParams,
+  QuestionVoteParams,
+  ToggleSaveQuestionParams,
 } from "./shared.types";
 
 export async function createQuestion(params: CreateQuestionParams) {
@@ -78,5 +81,130 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
     return question;
   } catch (error) {
     console.error(error);
+  }
+}
+
+export async function voteQuestion(params: QuestionVoteParams) {
+  try {
+    connectToDatabase();
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    // Fetch the current question and user to check voting status
+    const question = await Question.findById(questionId);
+    const user = await User.findById(userId);
+
+    if (!question || !user) {
+      throw new Error("Question or User not found");
+    }
+
+    const alreadyUpvoted = question.upvotes.includes(userId);
+    const alreadyDownvoted = question.downvotes.includes(userId);
+
+    // Handle downvote
+    if (hasdownVoted) {
+      if (alreadyDownvoted) {
+        await Question.findByIdAndUpdate(questionId, {
+          $pull: { downvotes: userId },
+        });
+        await User.findByIdAndUpdate(userId, {
+          $pull: { downvotes: questionId },
+        });
+        return; // Exit if already downvoted
+      }
+
+      // Update question votes
+      await Question.findByIdAndUpdate(questionId, {
+        $pull: { upvotes: userId },
+        $push: { downvotes: userId },
+      });
+
+      // Update user votes
+      await User.findByIdAndUpdate(userId, {
+        $pull: { upvotes: questionId },
+        $push: { downvotes: questionId },
+      });
+    } else {
+      // Handle upvote
+      if (alreadyUpvoted) {
+        await Question.findByIdAndUpdate(questionId, {
+          $pull: { upvotes: userId },
+        });
+        await User.findByIdAndUpdate(userId, {
+          $pull: { upvotes: questionId },
+        });
+        return; // Exit if already upvoted
+      }
+
+      // Update question votes
+      await Question.findByIdAndUpdate(questionId, {
+        $push: { upvotes: userId },
+        $pull: { downvotes: userId },
+      });
+
+      // Update user votes
+      await User.findByIdAndUpdate(userId, {
+        $push: { upvotes: questionId },
+        $pull: { downvotes: questionId },
+      });
+    }
+    // increment author's reputation by +10 for upvote and -5 for downvote
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
+  try {
+    connectToDatabase();
+    const { questionId, userId, path } = params;
+
+    const user = await User.findById(userId);
+    if (user.savedQuestions.includes(questionId)) {
+      await User.findByIdAndUpdate(userId, {
+        $pull: { savedQuestions: questionId },
+      });
+    } else {
+      await User.findByIdAndUpdate(userId, {
+        $push: { savedQuestions: questionId },
+      });
+    }
+    revalidatePath(path);
+  } catch (error: any) {
+    throw new Error("Error saving question", error);
+  }
+}
+
+export async function getUserSavedQuestions(params: GetSavedQuestionsParams) {
+  try {
+    await connectToDatabase();
+
+    const { clerkID } = params;
+
+    const user = await User.findOne({ clerkID }).populate({
+      path: "savedQuestions",
+      model: "Question",
+      populate: [
+        {
+          path: "author",
+          model: "User",
+        },
+        {
+          path: "tags",
+          model: "Tag",
+        },
+      ],
+      options: { sort: { createdAt: -1 } },
+    });
+
+    // Check if user was found
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Return the populated saved questions
+    return user.savedQuestions;
+  } catch (error: any) {
+    throw new Error("Error fetching user saved questions:", error);
   }
 }

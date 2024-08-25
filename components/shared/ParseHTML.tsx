@@ -36,7 +36,9 @@ const ParseHTML = ({ data }: Props) => {
     Prism.highlightAll();
   }, []);
 
-  return <div className="max-w-full">{parse(data)}</div>;
+  return (
+    <div className="text-dark300_light700 mt-10 max-w-full">{parse(data)}</div>
+  );
 };
 
 export default ParseHTML;

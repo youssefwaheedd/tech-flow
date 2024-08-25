@@ -38,18 +38,23 @@ const Page = async () => {
           containerClasses="flex max-xs:w-full"
         />
       </div>
-      <section className="mt-11 flex flex-wrap items-center justify-center gap-4 sm:justify-start">
-        {plainUsers?.length ? (
-          plainUsers.map((user) => <UserCard key={user._id} user={user} />)
-        ) : (
+
+      {plainUsers?.length ? (
+        <section className="mt-11 flex flex-wrap items-center justify-center gap-4 sm:justify-start">
+          {plainUsers.map((user) => (
+            <UserCard key={user._id} user={user} />
+          ))}
+        </section>
+      ) : (
+        <div className="mt-11 w-full items-center justify-center">
           <NoResult
             title="No users found"
             description="No users found, be the first to join our community!"
             buttonHref="/sign-up"
             buttonTitle="Join now!"
           />
-        )}
-      </section>
+        </div>
+      )}
     </>
   );
 };

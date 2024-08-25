@@ -47,7 +47,16 @@ const Page = async ({ params }: { params: { id: string } }) => {
             {author.name}
           </p>
         </Link>
-        <Votes />
+        <Votes
+          type="question"
+          itemId={JSON.stringify(question._id)}
+          userId={JSON.stringify(mongoUser?._id)}
+          upvotes={question.upvotes.length}
+          downvotes={question.downvotes.length}
+          isUpvoted={question.upvotes.includes(mongoUser?._id)}
+          isDownvoted={question.downvotes.includes(mongoUser?._id)}
+          isSaved={mongoUser?.savedQuestions.includes(question._id)}
+        />
       </div>
 
       {/* Question title   */}

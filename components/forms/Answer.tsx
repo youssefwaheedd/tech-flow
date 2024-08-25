@@ -45,8 +45,6 @@ const Answer = ({ authorId, questionContent, questionId }: Props) => {
         questionId: JSON.parse(questionId),
         path: pathname,
       });
-      console.log("Author ID:", authorId);
-      console.log("Question ID:", questionId);
 
       form.reset({ answer: "" });
 
@@ -54,8 +52,8 @@ const Answer = ({ authorId, questionContent, questionId }: Props) => {
         const editor = editorRef.current as any;
         editor.setContent("");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err: any) {
+      throw new Error("Error creating answer", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -65,8 +63,8 @@ const Answer = ({ authorId, questionContent, questionId }: Props) => {
     setIsGenerating(true);
     try {
       // handle generate answer
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      throw new Error("Error generating AI answer", error);
     } finally {
       setIsGenerating(false);
     }

@@ -29,7 +29,7 @@ const LeftSidebar = () => {
                     : link.route
               }
               key={index}
-              className={`${isActive ? "primary-gradient text-light-900 rounded-lg" : "text-dark300_light900"} flex items-center justify-start gap-3 bg-transparent p-4`}
+              className={`${isActive ? "primary-gradient rounded-lg text-white" : "text-dark300_light900"} flex items-center justify-start gap-3 bg-transparent p-4`}
             >
               <Image
                 src={link.imgURL}

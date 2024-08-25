@@ -12,22 +12,13 @@ import {
 } from "./shared.types";
 import Question, { IQuestion } from "../models/question.model";
 import Tag from "../models/tag.model";
-
-export const getUsers = async (params: GetAllUsersParams) => {
-  // const { page = 1, pageSize = 20, filter, searchQuery } = params;
-  try {
-    connectToDatabase();
-    const users = await User.find({}).sort({ joinedAt: -1 });
-    return { users };
-  } catch (error) {
-    console.error(error);
-  }
-};
+import Answer from "../models/answer.model";
 
 export const createUser = async (params: CreateUserParams) => {
   try {
     connectToDatabase();
     const newUser = await User.create(params);
+    revalidatePath("/");
     return newUser;
   } catch (error) {
     console.error(error);
@@ -45,6 +36,17 @@ export const updateUser = async (params: UpdateUserParams) => {
       { new: true }
     );
     revalidatePath(params.path);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getUsers = async (params: GetAllUsersParams) => {
+  // const { page = 1, pageSize = 20, filter, searchQuery } = params;
+  try {
+    connectToDatabase();
+    const users = await User.find({}).sort({ joinedAt: -1 });
+    return { users };
   } catch (error) {
     console.error(error);
   }
@@ -76,12 +78,13 @@ export const deleteUser = async (params: DeleteUserParams) => {
 
     // Delete user questions
     await Question.deleteMany({ author: user._id });
+    await Answer.deleteMany({ author: user._id });
 
     // Delete the user and other associated data
     const deletedUser = await User.findOneAndDelete({
       clerkID: params.clerkID,
     });
-
+    revalidatePath("/");
     return deletedUser;
   } catch (error) {
     console.error("Error deleting user:", error);
