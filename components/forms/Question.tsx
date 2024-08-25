@@ -21,12 +21,14 @@ import {
 import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import { createQuestion } from "@/lib/actions/question.action";
+import { useTheme } from "@/context/ThemeProvider";
 
 interface Props {
   mongoUserId: string;
 }
 
 const Question = ({ mongoUserId }: Props) => {
+  const { theme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
   const type: any = "create";
@@ -184,6 +186,8 @@ const Question = ({ mongoUserId }: Props) => {
                       "codesample | bold italic forecolor | alignleft aligncenter " +
                       "alignright alignjustify | bullist numlist ",
                     content_style: "body { font-family:Inter; font-size:16px }",
+                    skin: theme === "light" ? "oxide" : "oxide-dark",
+                    content_css: theme === "light" ? "light" : "dark",
                   }}
                 />
               </FormControl>

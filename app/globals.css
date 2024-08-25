@@ -7,7 +7,20 @@
 body {
   font-family: "Inter", sans-serif;
 }
+.parse-html-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word; /* Allows long words to break and wrap onto the next line */
+}
 
+@media (max-width: 768px) {
+  /* Additional responsive styles can go here */
+  .parse-html-container pre[class*="language-"] {
+    white-space: pre-wrap; /* Allows code blocks to wrap */
+    word-break: break-word; /* Breaks long words */
+  }
+}
 @layer utilities {
   .flex-center {
     @apply flex justify-center items-center;

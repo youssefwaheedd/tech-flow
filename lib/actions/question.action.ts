@@ -6,7 +6,11 @@ import { connectToDatabase } from "../database";
 import Question from "../models/question.model";
 import User from "../models/user.model";
 import Tag from "../models/tag.model";
-import { CreateQuestionParams, GetQuestionsParams } from "./shared.types";
+import {
+  CreateQuestionParams,
+  GetQuestionByIdParams,
+  GetQuestionsParams,
+} from "./shared.types";
 
 export async function createQuestion(params: CreateQuestionParams) {
   try {
@@ -60,15 +64,17 @@ export async function getQuestions(params: GetQuestionsParams) {
   }
 }
 
-export async function getQuestionById(questionId: string) {
+export async function getQuestionById(params: GetQuestionByIdParams) {
   try {
     connectToDatabase();
+    const { questionId } = params;
     const question = await Question.findById(questionId)
       .populate({
         path: "author",
         model: User,
+        select: "_id name avatar clerkID",
       })
-      .populate({ path: "tags", model: Tag });
+      .populate({ path: "tags", model: Tag, select: "_id name" });
     return question;
   } catch (error) {
     console.error(error);

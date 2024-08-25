@@ -7,6 +7,7 @@ import {
   CreateUserParams,
   DeleteUserParams,
   GetAllUsersParams,
+  GetUserByIdParams,
   UpdateUserParams,
 } from "./shared.types";
 import Question, { IQuestion } from "../models/question.model";
@@ -49,10 +50,10 @@ export const updateUser = async (params: UpdateUserParams) => {
   }
 };
 
-export const getUserById = async (userId: string) => {
+export const getUserById = async (params: GetUserByIdParams) => {
   try {
     connectToDatabase();
-    const user = await User.findOne({ clerkID: userId });
+    const user = await User.findOne({ clerkID: params.userId });
     return user;
   } catch (error) {
     console.error(error);

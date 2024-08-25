@@ -1,0 +1,167 @@
+/* General code block styles (without language specification) */
+code {
+  background-color: #030314; /* Dark background from Holi theme */
+  color: #d6e7ff; /* Light text color from Holi theme */
+  padding: 8px;
+  border-radius: 3px;
+  word-wrap: break-word;
+  letter-spacing: 0.2px; /* Consistent letter spacing */
+  font-size: 14px;
+}
+
+pre code {
+  display: block;
+  padding: 1rem;
+  margin: 1.5rem auto;
+  overflow-x: auto; /* Allow horizontal scrolling */
+  overflow-y: hidden; /* Hide vertical scrolling if not needed */
+  line-height: 1.5;
+  max-width: 70vw; /* Responsive width */
+  min-width: 300px;
+  background-color: #030314; /* Dark background */
+  color: #d6e7ff; /* Light text color */
+  border-radius: 1.5px;
+  white-space: nowrap; /* Prevent wrapping to create a scrollbar */
+  cursor: default; /* Default cursor for normal behavior */
+}
+
+/* Custom scrollbar styles */
+pre code::-webkit-scrollbar {
+  height: 1.25em; /* Height for horizontal scrollbar */
+}
+
+pre code::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #ff6f00; /* Custom scrollbar track color */
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+pre code::-webkit-scrollbar-thumb {
+  height: 48px;
+  border-radius: 10px;
+  background-color: #f6f6f5; /* Scrollbar thumb color */
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* PrismJS theme styles */
+pre[class*="language-"] {
+  overflow: auto;
+  background: #030314; /* Consistent dark background */
+  border: 1px solid #2a4555; /* Border similar to Holi theme */
+  border-radius: 5px;
+  padding: 1.5em 1em;
+  margin: 1em 0;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #d6e7ff; /* Light text color */
+  background: #030314; /* Consistent dark background */
+  font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono",
+    monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+:not(pre) > code[class*="language-"] {
+  color: #f0f6f6; /* Light text color for inline code */
+  background: #2a4555; /* Dark blue background for inline code */
+  padding: 0.2em 0.3em;
+  border-radius: 0.2em;
+}
+
+/* Syntax highlighting colors */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #446e69; /* Grey for comments */
+}
+
+.token.punctuation {
+  color: #d6b007; /* Yellow for punctuation */
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #d6e7ff; /* Light text for various tokens */
+}
+
+.token.selector,
+.token.attr-name,
+.token.builtin,
+.token.inserted {
+  color: #e60067; /* Red for selectors and inserted text */
+}
+
+.token.string,
+.token.char {
+  color: #49c6ec; /* Blue for strings and characters */
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #ec8e01; /* Orange for operators and URLs */
+  background: transparent;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #0fe468; /* Green for atrules and keywords */
+}
+
+.token.function,
+.token.class-name {
+  color: #78f3e9; /* Cyan for functions and class names */
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #d6e7ff; /* Consistent light text for regex, important, and variables */
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.inserted {
+  color: green; /* Green for inserted text */
+}
+
+/* Selection highlighting */
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection,
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+  color: inherit;
+  background: #1d3b54; /* Background color for selected text */
+  text-shadow: none;
+}

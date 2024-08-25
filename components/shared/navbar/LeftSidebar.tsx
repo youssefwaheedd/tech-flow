@@ -5,10 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import Image from "next/image";
-import { SignedOut } from "@clerk/nextjs";
+import { SignedOut, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
 const LeftSidebar = () => {
+  const { user } = useUser();
   const pathname = usePathname();
   return (
     <section className="background-light900_dark200 light-border-2 shadow-light100_dark100 custom-scrollbar sticky left-0 top-0 flex h-screen w-[18%] min-w-32 flex-col justify-between gap-3 overflow-y-auto border-r p-6 pt-36 max-lg:w-[12%] max-lg:items-center max-sm:hidden dark:shadow-none">
@@ -20,7 +21,13 @@ const LeftSidebar = () => {
 
           return (
             <Link
-              href={link.route}
+              href={
+                link.route === "/profile" && user
+                  ? `/profile/${user?.id}`
+                  : link.route === "/profile"
+                    ? "/sign-in"
+                    : link.route
+              }
               key={index}
               className={`${isActive ? "primary-gradient text-light-900 rounded-lg" : "text-dark300_light900"} flex items-center justify-start gap-3 bg-transparent p-4`}
             >
