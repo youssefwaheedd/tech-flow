@@ -7,7 +7,7 @@ import { formatNumber, getTimeStamp } from "@/lib/utils";
 
 interface Props {
   _id: string;
-  author: { _id: string; name: string; avatar: string };
+  author: { _id: string; name: string; avatar: string; clerkID: string };
   title: string;
   createdAt: Date;
   upvotes: Array<object>;
@@ -58,7 +58,7 @@ const QuestionCard: React.FC<Props> = ({
             alt="user"
             value={author.name}
             title={` - asked ${createdAtValue} ${dateFormat}${createdAtValue > 1 ? "s" : ""} ago`}
-            href={`/profile/${author._id}`}
+            href={`/profile/${author.clerkID}`}
             isAuthor
             textStyles=" small-medium text-dark400_light700"
           />

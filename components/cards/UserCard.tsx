@@ -50,7 +50,7 @@ const UserCard = ({ user }: Props) => {
         alt={user.username}
         width={100}
         height={100}
-        className="rounded-full object-contain"
+        className="size-[100px] rounded-full object-cover"
       />
       <p className="h3-bold line-clamp-1">{user.name}</p>
       <p>@{user.username}</p>
