@@ -14,6 +14,8 @@ const nextConfig = {
     ],
   },
 
+  reactStrictMode: false,
+
   experimental: {
     serverActions: true,
     mdxRs: true,

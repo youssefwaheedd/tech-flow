@@ -27,7 +27,7 @@ export const Filters: React.FC<Props> = ({
       <div className={`relative ${containerClasses}`}>
         <Select>
           <SelectTrigger
-            className={`body-regular light-border background-light800_dark300 text-dark500_light700 border   ${otherClasses}`}
+            className={`body-regular light-border background-light800_dark300 text-dark500_light700 border ${otherClasses}`}
           >
             <div className="line-clamp-1 flex-1 text-left">
               <SelectValue placeholder="Select a filter..." />
@@ -39,7 +39,7 @@ export const Filters: React.FC<Props> = ({
                 <SelectItem
                   key={filter.value}
                   value={filter.value}
-                  className="bg-light-800 text-light-500 dark:bg-dark-300 body-medium   py-3 capitalize shadow-none"
+                  className="bg-light-800 text-light-500 dark:bg-dark-300 body-medium py-3 capitalize shadow-none"
                 >
                   {filter.name}
                 </SelectItem>

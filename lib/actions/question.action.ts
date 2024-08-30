@@ -17,8 +17,8 @@ import {
 
 export async function createQuestion(params: CreateQuestionParams) {
   try {
+    await connectToDatabase();
     const { title, content, tags, author, path } = params;
-    connectToDatabase();
     const question = await Question.create({
       title,
       content,
@@ -56,7 +56,7 @@ export async function createQuestion(params: CreateQuestionParams) {
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const questions: any = await Question.find({})
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
@@ -69,7 +69,7 @@ export async function getQuestions(params: GetQuestionsParams) {
 
 export async function getQuestionById(params: GetQuestionByIdParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const { questionId } = params;
     const question = await Question.findById(questionId)
       .populate({
@@ -86,7 +86,7 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
 
 export async function voteQuestion(params: QuestionVoteParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
 
     // Fetch the current question and user to check voting status
@@ -156,7 +156,7 @@ export async function voteQuestion(params: QuestionVoteParams) {
 
 export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const { questionId, userId, path } = params;
 
     const user = await User.findById(userId);

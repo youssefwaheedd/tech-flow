@@ -1,10 +1,16 @@
 /* eslint-disable no-unused-vars */
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "../database";
 import Tag from "../models/tag.model";
 import User from "../models/user.model";
-import { GetAllTagsParams, GetTopInteractedTagsParams } from "./shared.types";
+import {
+  GetAllTagsParams,
+  GetQuestionsByTagIdParams,
+  GetTopInteractedTagsParams,
+} from "./shared.types";
+import path from "path";
 
 const tempTags = [
   { _id: 1, name: "react" },
@@ -34,12 +40,20 @@ export async function getAllTags(params: GetAllTagsParams) {
   }
 }
 
-export async function getTagById(tagId: string) {
+export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
+    const { tagId, page = 1, pageSize = 10, searchQuery } = params;
     const tag = await Tag.findById(tagId).populate({
       path: "questions",
       model: "Question",
+      populate: [
+        { path: "author", model: "User" },
+        {
+          path: "tags",
+          model: "Tag",
+        },
+      ],
     });
     return tag;
   } catch (error) {
@@ -49,7 +63,7 @@ export async function getTagById(tagId: string) {
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
-    // connectToDatabase();
+    // await connectToDatabase();
     // const { limit = 3, userId } = params;
     // const user = await User.findById(userId);
     // if (!user) {

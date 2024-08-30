@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { formatNumber } from "@/lib/utils";
 import {
   toggleSaveQuestion,
   voteQuestion,
 } from "@/lib/actions/question.action";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { voteAnswer } from "@/lib/actions/answer.actions";
+import { viewQuestion } from "@/lib/actions/interaction.action";
 
 interface Props {
   type: string;
@@ -33,7 +34,7 @@ const Votes = ({
   isSaved,
 }: Props) => {
   const pathname = usePathname();
-
+  const router = useRouter();
   // Local state to manage UI updates
   const [localUpvotes, setLocalUpvotes] = useState(upvotes);
   const [localDownvotes, setLocalDownvotes] = useState(downvotes);
@@ -45,9 +46,6 @@ const Votes = ({
   const [loading, setLoading] = useState(false);
 
   const handleVote = async (voteType: string) => {
-    if (loading) return; // Prevent multiple requests while one is in progress
-    setLoading(true);
-
     // Optimistic UI update
     if (voteType === "upvote" && !localIsUpvoted) {
       setLocalUpvotes(localUpvotes + 1);
@@ -83,8 +81,6 @@ const Votes = ({
         setLocalDownvotes(downvotes);
         setLocalIsUpvoted(isUpvoted);
         setLocalIsDownvoted(isDownvoted);
-      } finally {
-        setLoading(false);
       }
     }
     if (type === "answer") {
@@ -103,15 +99,10 @@ const Votes = ({
         setLocalDownvotes(downvotes);
         setLocalIsUpvoted(isUpvoted);
         setLocalIsDownvoted(isDownvoted);
-      } finally {
-        setLoading(false);
       }
     }
   };
   const handleSave = async () => {
-    if (loading) return; // Prevent multiple requests while one is in progress
-    setLoading(true);
-
     // Optimistic UI update
     if (localIsSaved) {
       setLocalIsSaved(false);
@@ -129,10 +120,18 @@ const Votes = ({
       console.error(error);
       // Rollback on error
       setLocalIsSaved(isSaved);
-    } finally {
-      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const ViewQuestion = async () => {
+      await viewQuestion({
+        questionId: JSON.parse(itemId),
+        userId: userId ? JSON.parse(userId) : undefined,
+      });
+    };
+    ViewQuestion();
+  }, [itemId, userId, pathname, router]);
 
   return (
     <div className="flex gap-4">

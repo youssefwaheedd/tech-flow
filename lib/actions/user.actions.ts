@@ -16,7 +16,7 @@ import Answer from "../models/answer.model";
 
 export const createUser = async (params: CreateUserParams) => {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const newUser = await User.create(params);
     revalidatePath("/");
     return newUser;
@@ -27,7 +27,7 @@ export const createUser = async (params: CreateUserParams) => {
 
 export const updateUser = async (params: UpdateUserParams) => {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     await User.findOneAndUpdate(
       {
         clerkID: params.clerkID,
@@ -44,7 +44,7 @@ export const updateUser = async (params: UpdateUserParams) => {
 export const getUsers = async (params: GetAllUsersParams) => {
   // const { page = 1, pageSize = 20, filter, searchQuery } = params;
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const users = await User.find({}).sort({ joinedAt: -1 });
     return { users };
   } catch (error) {
@@ -54,7 +54,7 @@ export const getUsers = async (params: GetAllUsersParams) => {
 
 export const getUserById = async (params: GetUserByIdParams) => {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const user = await User.findOne({ clerkID: params.userId });
     return user;
   } catch (error) {

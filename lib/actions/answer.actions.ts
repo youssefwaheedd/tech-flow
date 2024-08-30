@@ -14,7 +14,7 @@ import User from "../models/user.model";
 
 export async function createAnswer(params: CreateAnswerParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const { content, authorId, questionId, path } = params;
     const newAnswer = await Answer.create({
       content,
@@ -56,7 +56,7 @@ export async function getAnswers(params: GetAnswersParams) {
 
 export async function voteAnswer(params: AnswerVoteParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
 
     // Fetch the current question and user to check voting status
