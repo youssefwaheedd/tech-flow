@@ -13,6 +13,7 @@ import {
 import Question, { IQuestion } from "../models/question.model";
 import Tag from "../models/tag.model";
 import Answer from "../models/answer.model";
+import path from "path";
 
 export const createUser = async (params: CreateUserParams) => {
   try {
@@ -55,7 +56,24 @@ export const getUsers = async (params: GetAllUsersParams) => {
 export const getUserById = async (params: GetUserByIdParams) => {
   try {
     await connectToDatabase();
-    const user = await User.findOne({ clerkID: params.userId });
+    const user = await User.findOne({ clerkID: params.userId })
+      .populate({
+        path: "questions",
+        model: "Question",
+        options: { sort: { createdAt: -1 } },
+        populate: [
+          { path: "author", model: "User" },
+          {
+            path: "tags",
+            model: "Tag",
+          },
+        ],
+      })
+      .populate({
+        path: "answers",
+        model: "Answer",
+        populate: [{ path: "author", model: "User" }],
+      });
     return user;
   } catch (error) {
     console.error(error);

@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-custom-classname */
 /* eslint-disable no-unused-vars */
 import Metric from "@/components/shared/Metric";
 import { getUserById } from "@/lib/actions/user.actions";
@@ -5,13 +6,43 @@ import { getTimeStamp } from "@/lib/utils";
 import { URLProps } from "@/types";
 import Image from "next/image";
 import React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import QuestionCard from "@/components/cards/QuestionCard";
+import NoResult from "@/components/shared/NoResult";
+import { auth } from "@clerk/nextjs/server";
+import RenderTag from "@/components/shared/RenderTag";
+
+const popularTags = [
+  {
+    _id: 1,
+    name: "React",
+    totalQuestions: 10,
+  },
+  {
+    _id: 2,
+    name: "Redux",
+    totalQuestions: 10,
+  },
+  {
+    _id: 3,
+    name: "Context API",
+    totalQuestions: 10,
+  },
+  {
+    _id: 4,
+    name: "Custom Hooks",
+    totalQuestions: 10,
+  },
+];
 
 const Page = async ({ params, searchParams }: URLProps) => {
+  const { userId } = auth();
   const mongoUser = await getUserById({ userId: params.id });
+  const userQuestions = mongoUser.questions;
   const { createdAtValue, dateFormat } = getTimeStamp(mongoUser.joinedAt);
   return (
     <>
-      <div className="flex flex-col justify-start gap-3 sm:flex-row">
+      <div className="flex flex-col justify-start gap-3 sm:flex-row sm:flex-wrap">
         <Image
           src={mongoUser.avatar}
           alt="user"
@@ -22,7 +53,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
         <div className="text-dark500_light700 flex flex-col items-start justify-start">
           <h2 className="h2-bold">{mongoUser.name}</h2>
           <p className="text-sm">@{mongoUser.username}</p>
-          <div className="mt-5 flex gap-6 ">
+          <div className="mt-5 flex flex-wrap gap-6">
             {mongoUser.personalWebsite && (
               <Metric
                 imgUrl="/assets/icons/link.svg"
@@ -47,6 +78,147 @@ const Page = async ({ params, searchParams }: URLProps) => {
               value={`joined ${createdAtValue} ${dateFormat}${createdAtValue > 1 ? "s" : ""} ago`}
               textStyles="ml-1"
             />
+          </div>
+        </div>
+      </div>
+      <h2 className="text-dark300_light900 h2-bold mb-3 mt-7">Stats</h2>
+      <div className="grid w-full grid-cols-2 gap-3  md:grid-cols-4">
+        <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row sm:flex-wrap">
+          <p className="text-dark300_light900 text-xs sm:text-sm">
+            {mongoUser.questions.length} Questions
+          </p>
+          <p className="text-dark300_light900 text-xs sm:text-sm">
+            {mongoUser.answers.length} Answers
+          </p>
+        </section>
+        <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
+          <Image
+            src="/assets/icons/gold-medal.svg"
+            alt="gold badge"
+            width={37}
+            height={50}
+          />
+          <div className="text-dark300_light900 flex gap-3 text-xs sm:flex-col sm:gap-0 sm:text-sm">
+            <p>0</p> <p>Gold Badges</p>
+          </div>
+        </section>
+        <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
+          <Image
+            src="/assets/icons/silver-medal.svg"
+            alt="silver badge"
+            width={37}
+            height={50}
+          />
+          <div className="text-dark300_light900 flex gap-3 text-xs sm:flex-col sm:gap-0 sm:text-sm">
+            <p>0</p> <p>Silver Badges</p>
+          </div>
+        </section>
+        <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
+          <Image
+            src="/assets/icons/bronze-medal.svg"
+            alt="bronze badge"
+            width={37}
+            height={50}
+          />
+          <div className="text-dark300_light900 flex gap-3 text-xs sm:flex-col sm:gap-0 sm:text-sm">
+            <p>0</p>
+            <p>Bronze Badges</p>
+          </div>
+        </section>
+      </div>
+
+      <div className="flex justify-between gap-6">
+        <Tabs defaultValue="Posts" className="mt-5 min-w-full lg:min-w-[600px]">
+          <TabsList className="background-light900_dark200 text-light400_light500 mb-4 p-6">
+            <TabsTrigger value="Posts" className="tab-trigger ">
+              Posts
+            </TabsTrigger>
+            <TabsTrigger value="Answers" className="tab-trigger ">
+              Answers
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent
+            value="Posts"
+            className="flex w-full flex-col justify-center gap-6"
+          >
+            {userQuestions.length > 0
+              ? userQuestions.map((question: any) => (
+                  <QuestionCard
+                    _id={question._id}
+                    key={question._id}
+                    author={question.author}
+                    title={question.title}
+                    createdAt={question.createdAt}
+                    upvotes={question.upvotes}
+                    answers={question.answers}
+                    views={question.views}
+                    tags={question.tags.map((tag: []) => tag)}
+                  />
+                ))
+              : {
+                  ...(userId === mongoUser.clerkID ? (
+                    <NoResult
+                      description="You haven't posted any questions yet."
+                      title="No posts yet"
+                      buttonHref="/ask-question"
+                      buttonTitle="Ask a question"
+                    />
+                  ) : (
+                    <NoResult
+                      description="This user hasn't posted any questions yet."
+                      title="No posts yet"
+                    />
+                  )),
+                }}
+          </TabsContent>
+          <TabsContent
+            value="Answers"
+            className="flex w-full flex-col items-center justify-center gap-6"
+          >
+            {mongoUser.answers.length > 0
+              ? mongoUser.answers.map((answer: any) => (
+                  <QuestionCard
+                    _id={answer._id}
+                    key={answer._id}
+                    author={answer.author}
+                    title={answer.title}
+                    createdAt={answer.createdAt}
+                    upvotes={answer.upvotes}
+                    answers={answer.answers}
+                    views={answer.views}
+                    tags={answer.tags.map((tag: []) => tag)}
+                  />
+                ))
+              : {
+                  ...(userId === mongoUser.clerkID ? (
+                    <NoResult
+                      description="You haven't answered any questions yet."
+                      title="No answers yet"
+                      buttonHref="/"
+                      buttonTitle="Explore questions"
+                    />
+                  ) : (
+                    <NoResult
+                      description="This user hasn't answered any questions yet."
+                      title="No answers yet"
+                    />
+                  )),
+                }}
+          </TabsContent>
+        </Tabs>
+
+        <div className=" hidden w-full max-w-[300px] lg:flex lg:flex-col">
+          <h2 className="text-dark300_light900 h2-bold mb-3 mt-7">Top Tags</h2>
+          <div className="mt-5 flex flex-col gap-[15px]">
+            {popularTags.map((tag) => (
+              <RenderTag
+                key={tag._id}
+                _id={tag._id}
+                name={tag.name}
+                totalQuestions={tag.totalQuestions}
+                showCount
+              />
+            ))}
           </div>
         </div>
       </div>

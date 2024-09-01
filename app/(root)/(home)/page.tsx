@@ -10,8 +10,7 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import { getQuestions } from "@/lib/actions/question.action";
-
-export default async function Home() {
+const Home = async () => {
   const result: any = await getQuestions({});
 
   return (
@@ -69,4 +68,6 @@ export default async function Home() {
       </div>
     </>
   );
-}
+};
+
+export default Home;

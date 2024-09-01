@@ -14,38 +14,40 @@ const LeftSidebar = () => {
   return (
     <section className="background-light900_dark200 light-border-2 shadow-light100_dark100 custom-scrollbar sticky left-0 top-0 flex h-screen w-[18%] min-w-32 flex-col justify-between gap-3 overflow-y-auto border-r p-6 pt-36 max-lg:w-[12%] max-lg:items-center max-sm:hidden dark:shadow-none">
       <div className="flex flex-1 flex-col gap-6">
-        {sidebarLinks.map((link, index) => {
-          const isActive =
-            (pathname.includes(link.route) && link.route.length > 1) ||
-            pathname === link.route;
+        {sidebarLinks
+          .filter((link) => !(link.route === "/profile" && !user)) // Filter out profile link if no user
+          .map((link, index) => {
+            const isActive =
+              (pathname.includes(link.route) && link.route.length > 1) ||
+              pathname === link.route;
 
-          return (
-            <Link
-              href={
-                link.route === "/profile" && user
-                  ? `/profile/${user?.id}`
-                  : link.route === "/profile"
-                    ? "/sign-in"
-                    : link.route
-              }
-              key={index}
-              className={`${isActive ? "primary-gradient rounded-lg text-white" : "text-dark300_light900"} flex items-center justify-start gap-3 bg-transparent p-4`}
-            >
-              <Image
-                src={link.imgURL}
-                width={20}
-                height={20}
-                alt={link.label}
-                className={`${!isActive && "invert-colors"}`}
-              />
-              <p
-                className={`${isActive ? "base-bold" : "base-medium"} max-lg:hidden`}
+            return (
+              <Link
+                href={
+                  link.route === "/profile" && user
+                    ? `/profile/${user?.id}`
+                    : link.route === "/profile"
+                      ? "/sign-in"
+                      : link.route
+                }
+                key={index}
+                className={`${isActive ? "primary-gradient rounded-lg text-white" : "text-dark300_light900"} flex items-center justify-start gap-3 bg-transparent p-4`}
               >
-                {link.label}
-              </p>
-            </Link>
-          );
-        })}
+                <Image
+                  src={link.imgURL}
+                  width={20}
+                  height={20}
+                  alt={link.label}
+                  className={`${!isActive && "invert-colors"}`}
+                />
+                <p
+                  className={`${isActive ? "base-bold" : "base-medium"} max-lg:hidden`}
+                >
+                  {link.label}
+                </p>
+              </Link>
+            );
+          })}
       </div>
       <SignedOut>
         <div className="flex flex-col gap-3">

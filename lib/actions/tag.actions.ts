@@ -47,6 +47,7 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     const tag = await Tag.findById(tagId).populate({
       path: "questions",
       model: "Question",
+      options: { sort: { createdAt: -1 } },
       populate: [
         { path: "author", model: "User" },
         {

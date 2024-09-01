@@ -11,8 +11,8 @@ const NoResult = ({
 }: {
   title: string;
   description: string;
-  buttonHref: string;
-  buttonTitle: string;
+  buttonHref?: string;
+  buttonTitle?: string;
 }) => {
   return (
     <div className="mt-10 flex flex-col items-center justify-center gap-2">
@@ -39,11 +39,13 @@ const NoResult = ({
       >
         {description}
       </h3>
-      <Link href={buttonHref} className="mt-2 flex justify-start">
-        <Button className="bg-primary-500 !text-light-900 min-h-[46px] rounded-md px-4 py-3 text-center">
-          {buttonTitle}
-        </Button>
-      </Link>
+      {buttonHref && buttonTitle && (
+        <Link href={buttonHref} className="mt-2 flex justify-start">
+          <Button className="bg-primary-500 !text-light-900 min-h-[46px] rounded-md px-4 py-3 text-center">
+            {buttonTitle}
+          </Button>
+        </Link>
+      )}
     </div>
   );
 };

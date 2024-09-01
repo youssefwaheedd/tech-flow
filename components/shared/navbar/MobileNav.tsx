@@ -9,42 +9,55 @@ import {
 } from "@/components/ui/sheet";
 import Image from "next/image";
 import Link from "next/link";
-import { SignedOut } from "@clerk/nextjs";
+import { SignedOut, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { sidebarLinks } from "@/constants";
 import { usePathname } from "next/navigation";
 
 const NavContent = () => {
+  const { user } = useUser();
   const pathname = usePathname();
 
   return (
     <section className="flex max-h-screen flex-col gap-3 pt-5">
-      {sidebarLinks.map((link, index) => {
-        const isActive =
-          (pathname.includes(link.route) && link.route.length > 1) ||
-          pathname === link.route;
+      {sidebarLinks
+        .filter((link) => !(link.route === "/profile" && !user)) // filter out profile link if no user
+        .map((link, index) => {
+          const isActive =
+            (pathname.includes(link.route) && link.route.length > 1) ||
+            pathname === link.route;
 
-        return (
-          <SheetClose asChild key={link.route}>
-            <Link
-              href={link.route}
-              key={index}
-              className={`${isActive ? "primary-gradient text-light-900 rounded-lg text-sm" : "text-dark300_light900 text-xs"} flex items-center justify-start gap-3 bg-transparent p-4 `}
-            >
-              <Image
-                src={link.imgURL}
-                width={20}
-                height={20}
-                alt={link.label}
-                className={`${!isActive && "invert-colors"}`}
-              />
-              <p className={`${isActive ? "font-bold" : "text-base"}`}>
-                {link.label}
-              </p>
-            </Link>
-          </SheetClose>
-        );
-      })}
+          return (
+            <SheetClose asChild key={link.route}>
+              <Link
+                href={
+                  link.route === "/profile" && user
+                    ? `/profile/${user?.id}`
+                    : link.route === "/profile"
+                      ? "/sign-in"
+                      : link.route
+                }
+                key={index}
+                className={`${
+                  isActive
+                    ? "primary-gradient text-light-900 rounded-lg text-sm"
+                    : "text-dark300_light900 text-xs"
+                } flex items-center justify-start gap-3 bg-transparent p-4 `}
+              >
+                <Image
+                  src={link.imgURL}
+                  width={20}
+                  height={20}
+                  alt={link.label}
+                  className={`${!isActive && "invert-colors"}`}
+                />
+                <p className={`${isActive ? "font-bold" : "text-base"}`}>
+                  {link.label}
+                </p>
+              </Link>
+            </SheetClose>
+          );
+        })}
     </section>
   );
 };
@@ -81,7 +94,7 @@ const MobileNav = () => {
             <NavContent />
           </SheetClose>
           <SignedOut>
-            <div className=" flex flex-col gap-2 sm:mb-6">
+            <div className="flex flex-col gap-2 sm:mb-6">
               <SheetClose asChild>
                 <Link href="/sign-in">
                   <Button className="small-medium btn-secondary min-h[41px] w-full rounded-lg px-4 py-3 shadow-none">
