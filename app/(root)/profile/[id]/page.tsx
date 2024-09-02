@@ -11,6 +11,9 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import { auth } from "@clerk/nextjs/server";
 import RenderTag from "@/components/shared/RenderTag";
+import { SignedIn } from "@clerk/nextjs";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const popularTags = [
   {
@@ -42,7 +45,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
   const { createdAtValue, dateFormat } = getTimeStamp(mongoUser.joinedAt);
   return (
     <>
-      <div className="flex flex-col justify-start gap-3 sm:flex-row sm:flex-wrap">
+      <div className="flex w-full flex-col items-start justify-start gap-3 sm:flex-row sm:flex-wrap">
         <Image
           src={mongoUser.avatar}
           alt="user"
@@ -50,34 +53,52 @@ const Page = async ({ params, searchParams }: URLProps) => {
           height={140}
           className="size-[140px] rounded-full object-cover"
         />
-        <div className="text-dark500_light700 flex flex-col items-start justify-start">
-          <h2 className="h2-bold">{mongoUser.name}</h2>
-          <p className="text-sm">@{mongoUser.username}</p>
-          <div className="mt-5 flex flex-wrap gap-6">
-            {mongoUser.personalWebsite && (
-              <Metric
-                imgUrl="/assets/icons/link.svg"
-                alt="portfolio"
-                value="Portfolio"
-                href={mongoUser.portfolioWebsite}
-                textStyles="text-blue-600"
-              />
+        <div className="flex w-full flex-col-reverse justify-between sm:flex-row">
+          <div className="text-dark500_light700 flex flex-col items-start justify-start">
+            <h2 className="h2-bold">{mongoUser.name}</h2>
+            <p className="text-dark-200_light800 text-sm">
+              @{mongoUser.username}
+            </p>
+            {mongoUser.bio && (
+              <p className="text-dark300_light900 mt-3">{mongoUser.bio}</p>
             )}
+            <div className="mt-5 flex flex-wrap gap-6">
+              {mongoUser.personalWebsite && (
+                <Metric
+                  imgUrl="/assets/icons/link.svg"
+                  alt="portfolio"
+                  value="Portfolio"
+                  href={mongoUser.portfolioWebsite}
+                  textStyles="text-blue-600"
+                />
+              )}
 
-            {mongoUser.location && (
+              {mongoUser.location && (
+                <Metric
+                  imgUrl="/assets/icons/location.svg"
+                  alt="location"
+                  value={mongoUser.location}
+                />
+              )}
+
               <Metric
-                imgUrl="/assets/icons/location.svg"
-                alt="location"
-                value={mongoUser.location}
+                imgUrl="/assets/icons/calendar.svg"
+                alt="joined at date"
+                value={`joined ${createdAtValue} ${dateFormat}${createdAtValue > 1 ? "s" : ""} ago`}
+                textStyles="ml-1"
               />
-            )}
-
-            <Metric
-              imgUrl="/assets/icons/calendar.svg"
-              alt="joined at date"
-              value={`joined ${createdAtValue} ${dateFormat}${createdAtValue > 1 ? "s" : ""} ago`}
-              textStyles="ml-1"
-            />
+            </div>
+          </div>
+          <div className="mt-1 flex self-end justify-self-end max-sm:mb-5 max-sm:w-full sm:mt-3 sm:justify-end">
+            <SignedIn>
+              {userId === mongoUser.clerkID && (
+                <Link href="/profile/edit">
+                  <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4">
+                    Edit Profile
+                  </Button>
+                </Link>
+              )}
+            </SignedIn>
           </div>
         </div>
       </div>
@@ -129,11 +150,11 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
       <div className="flex justify-between gap-6">
         <Tabs defaultValue="Posts" className="mt-5 min-w-full lg:min-w-[600px]">
-          <TabsList className="background-light900_dark200 text-light400_light500 mb-4 p-6">
-            <TabsTrigger value="Posts" className="tab-trigger ">
+          <TabsList className="background-light800_dark400 text-light400_light500 mb-4 min-h-[42px] rounded-lg p-6">
+            <TabsTrigger value="Posts" className="tab">
               Posts
             </TabsTrigger>
-            <TabsTrigger value="Answers" className="tab-trigger ">
+            <TabsTrigger value="Answers" className="tab">
               Answers
             </TabsTrigger>
           </TabsList>

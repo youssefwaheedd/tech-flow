@@ -202,24 +202,4 @@
       rgba(19, 22, 28, 0.7) 100%
     );
   }
-
-  .tab-trigger {
-    cursor: pointer;
-    background-color: transparent;
-  }
-
-  .tab-trigger[data-state="active"] {
-    background-color: #f5f5f5; /* Light theme background color */
-    color: rgb(224, 154, 24); /* Optional: Change text color when active */
-  }
-
-  /* Dark mode styling */
-  .dark .tab-trigger[data-state="active"] {
-    background: linear-gradient(
-      232deg,
-      rgba(23, 28, 35, 0.41) 0%,
-      rgba(19, 22, 28, 0.7) 100%
-    ); /* Dark mode gradient background */
-    color: rgb(224, 154, 24); /* Optional: Change text color when active */
-  }
 }

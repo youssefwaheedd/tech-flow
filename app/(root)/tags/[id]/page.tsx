@@ -32,7 +32,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
       <h4 className="text-dark300_light900 mt-3 self-start">
         tag created {createdAtValue} {dateFormat}
         {createdAtValue > 1 ? "s" : ""} ago by{" "}
-        <Link className="cursor-pointer" href={`/profile/${mongoUser?._id}`}>
+        <Link
+          className="cursor-pointer"
+          href={`/profile/${mongoUser?.clerkID}`}
+        >
           {mongoUser?.username}
         </Link>
       </h4>
