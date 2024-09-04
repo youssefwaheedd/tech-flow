@@ -22,7 +22,7 @@ export async function viewQuestion(params: ViewQuestionParams) {
       });
 
       if (existingInteraction) {
-        return console.log("Question already viewed");
+        return;
       }
 
       await Interaction.create({

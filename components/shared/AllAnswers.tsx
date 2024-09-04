@@ -55,8 +55,8 @@ const AllAnswers = async ({ questionId, userId, totalAnswers }: Props) => {
                     userId={userId}
                     upvotes={answer.upvotes.length}
                     downvotes={answer.downvotes.length}
-                    isUpvoted={answer.upvotes.includes(userId)}
-                    isDownvoted={answer.downvotes.includes(userId)}
+                    isUpvoted={answer.upvotes.includes(JSON.parse(userId))}
+                    isDownvoted={answer.downvotes.includes(JSON.parse(userId))}
                   />
                 </div>
               </div>

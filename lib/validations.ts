@@ -9,3 +9,12 @@ export const QuestionsSchema = z.object({
 export const AnswerSchema = z.object({
   answer: z.string().min(50),
 });
+
+export const EditQuestionSchema = z.object({
+  title: z.string().min(5).max(130),
+  content: z.string().min(20),
+});
+
+export const EditAnswerSchema = z.object({
+  content: z.string().min(50),
+});

@@ -4,11 +4,14 @@ import Link from "next/link";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { SignedIn } from "@clerk/nextjs";
+import EditDeleteAction from "../shared/EditDeleteAction";
 
 interface Props {
   _id: string;
   author: { _id: string; name: string; avatar: string; clerkID: string };
   title: string;
+  clerkID?: string | null;
   createdAt: Date;
   upvotes: Array<object>;
   community?: string;
@@ -24,6 +27,7 @@ const QuestionCard: React.FC<Props> = ({
   _id,
   author,
   title,
+  clerkID,
   createdAt,
   upvotes,
   answers,
@@ -31,15 +35,18 @@ const QuestionCard: React.FC<Props> = ({
   tags,
 }) => {
   const { createdAtValue, dateFormat } = getTimeStamp(createdAt);
-
+  const showActionButtons = clerkID && clerkID === author.clerkID;
   return (
-    <section className="card-wrapper text-dark300_light900 min-h-[209px] rounded-[10px] px-4">
-      <div className="xs:px-[35px] flex w-full flex-col gap-3.5 py-[36px] sm:px-[45px]">
-        <Link href={`/question/${_id}`}>
-          <h3 className="base-semibold sm:h3-semibold line-clamp-2 flex-1">
-            {title}
-          </h3>
-        </Link>
+    <Link
+      href={`/question/${_id}`}
+      className="min-h-[209px] cursor-pointer rounded-[10px] px-4"
+      passHref
+      legacyBehavior
+    >
+      <div className="card-wrapper text-dark300_light900 xs:px-[35px] flex min-h-[209px] w-full cursor-pointer flex-col gap-3.5 rounded-[10px] px-4 py-[36px] sm:px-[45px]">
+        <h3 className="base-semibold sm:h3-semibold text-dark300_light900 line-clamp-2 flex-1">
+          {title}
+        </h3>
 
         <div className="flex flex-wrap gap-4">
           {tags.map((tag, index) => (
@@ -86,8 +93,15 @@ const QuestionCard: React.FC<Props> = ({
             />
           </div>
         </div>
+        <div className="flex w-full justify-end p-0">
+          <SignedIn>
+            {showActionButtons && (
+              <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
+            )}
+          </SignedIn>
+        </div>
       </div>
-    </section>
+    </Link>
   );
 };
 

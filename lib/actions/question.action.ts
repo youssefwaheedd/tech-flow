@@ -8,12 +8,16 @@ import User from "../models/user.model";
 import Tag from "../models/tag.model";
 import {
   CreateQuestionParams,
+  DeleteQuestionParams,
+  EditQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
   GetSavedQuestionsParams,
   QuestionVoteParams,
   ToggleSaveQuestionParams,
 } from "./shared.types";
+import Answer from "../models/answer.model";
+import Interaction from "../models/interaction.model";
 
 export async function createQuestion(params: CreateQuestionParams) {
   try {
@@ -206,5 +210,60 @@ export async function getUserSavedQuestions(params: GetSavedQuestionsParams) {
     return user.savedQuestions;
   } catch (error: any) {
     throw new Error("Error fetching user saved questions:", error);
+  }
+}
+
+export async function editQuestion(params: EditQuestionParams) {
+  try {
+    await connectToDatabase();
+    const { questionId, title, content, path } = params;
+
+    const question = await Question.findById(questionId).populate("tags");
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    question.title = title;
+    question.content = content;
+
+    await question.save();
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deleteQuestion(params: DeleteQuestionParams) {
+  try {
+    await connectToDatabase();
+    const { questionId, path } = params;
+    await Question.deleteOne({ _id: questionId });
+    await Answer.deleteMany({ question: questionId });
+    await Interaction.deleteMany({ question: questionId });
+    await Tag.updateMany(
+      { questions: questionId },
+      { $pull: { questions: questionId } }
+    );
+    await User.updateMany(
+      { questions: questionId },
+      { $pull: { questions: questionId } }
+    );
+    await User.updateMany(
+      { savedQuestions: questionId },
+      { $pull: { savedQuestions: questionId } }
+    );
+    await User.updateMany(
+      { upvotes: questionId },
+      { $pull: { upvotes: questionId } }
+    );
+    await User.updateMany(
+      { downvotes: questionId },
+      { $pull: { downvotes: questionId } }
+    );
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
   }
 }

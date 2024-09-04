@@ -68,7 +68,7 @@ export interface CreateQuestionParams {
 }
 
 export interface GetQuestionByIdParams {
-  questionId: string;
+  questionId: string | null;
 }
 
 export interface QuestionVoteParams {

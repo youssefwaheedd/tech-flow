@@ -20,44 +20,59 @@ import {
 } from "@/components/ui/form";
 import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useTheme } from "@/context/ThemeProvider";
 
 interface Props {
   mongoUserId: string;
+  formType: string;
+  question?: string;
 }
 
-const Question = ({ mongoUserId }: Props) => {
+const Question = ({ mongoUserId, formType, question }: Props) => {
   const { theme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
-  const type: any = "create";
+  const type = formType;
   const editorRef = useRef(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
+  const parsedQuestion = JSON.parse(question || "");
+
+  const groupedTags = parsedQuestion.tags.map((tag: any) => tag.name);
+
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: "",
-      explanation: "",
-      tags: [],
+      title: parsedQuestion.title || "",
+      explanation: parsedQuestion.content || "",
+      tags: groupedTags || [],
     },
   });
 
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
     try {
-      await createQuestion({
-        title: values.title,
-        content: values.explanation,
-        tags: values.tags,
-        author: JSON.parse(mongoUserId),
-        path: pathname,
-      });
-
-      router.push("/");
+      if (type === "create") {
+        await createQuestion({
+          title: values.title,
+          content: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: pathname,
+        });
+        router.push("/");
+      } else {
+        await editQuestion({
+          questionId: parsedQuestion._id,
+          title: values.title,
+          content: values.explanation,
+          path: pathname,
+        });
+        router.push(`/question/${parsedQuestion._id}`);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -160,7 +175,7 @@ const Question = ({ mongoUserId }: Props) => {
                   }
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
-                  initialValue=""
+                  initialValue={parsedQuestion.content || ""}
                   init={{
                     height: 350,
                     menubar: false,
@@ -212,6 +227,7 @@ const Question = ({ mongoUserId }: Props) => {
                   <div className="flex gap-1">
                     <Input
                       ref={inputRef}
+                      disabled={type === "edit"}
                       placeholder="Add tags..."
                       className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                       onKeyDown={(e) => handleKeyDown(e, field)}
@@ -234,17 +250,23 @@ const Question = ({ mongoUserId }: Props) => {
                       {field.value.map((tag) => (
                         <Badge
                           key={tag}
-                          onClick={() => handleTagRemove(tag, field)}
+                          onClick={() =>
+                            type === "create"
+                              ? handleTagRemove(tag, field)
+                              : () => {}
+                          }
                           className="background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 text-xs capitalize"
                         >
                           {tag}
-                          <Image
-                            src="assets/icons/close.svg"
-                            alt="close icon"
-                            width={12}
-                            height={12}
-                            className="cursor-pointer object-contain invert-0 dark:invert"
-                          />
+                          {type === "create" && (
+                            <Image
+                              src="/assets/icons/close.svg"
+                              alt="close icon"
+                              width={12}
+                              height={12}
+                              className="cursor-pointer object-contain invert-0 dark:invert"
+                            />
+                          )}
                         </Badge>
                       ))}
                     </div>

@@ -18,10 +18,7 @@ import { AnswerSchema } from "@/lib/validations";
 import { useTheme } from "../../context/ThemeProvider";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { set } from "mongoose";
 import { createAnswer } from "@/lib/actions/answer.actions";
-import { IAnswer } from "@/lib/models/answer.model";
-import { CreateAnswerParams } from "@/lib/actions/shared.types";
 import { usePathname } from "next/navigation";
 
 interface Props {

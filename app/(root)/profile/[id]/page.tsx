@@ -14,6 +14,8 @@ import RenderTag from "@/components/shared/RenderTag";
 import { SignedIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import AnswerTab from "@/components/profile/AnswerTab";
+import QuestionTab from "@/components/profile/QuestionTab";
 
 const popularTags = [
   {
@@ -47,7 +49,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
     <>
       <div className="flex w-full flex-col items-start justify-start gap-3 sm:flex-row sm:flex-wrap">
         <Image
-          src={mongoUser.avatar}
+          src={mongoUser?.avatar}
           alt="user"
           width={140}
           height={140}
@@ -55,12 +57,12 @@ const Page = async ({ params, searchParams }: URLProps) => {
         />
         <div className="flex w-full flex-col-reverse justify-between sm:flex-row">
           <div className="text-dark500_light700 flex flex-col items-start justify-start">
-            <h2 className="h2-bold">{mongoUser.name}</h2>
+            <h2 className="h2-bold">{mongoUser?.name}</h2>
             <p className="text-dark-200_light800 text-sm">
-              @{mongoUser.username}
+              @{mongoUser?.username}
             </p>
             {mongoUser.bio && (
-              <p className="text-dark300_light900 mt-3">{mongoUser.bio}</p>
+              <p className="text-dark300_light900 mt-3">{mongoUser?.bio}</p>
             )}
             <div className="mt-5 flex flex-wrap gap-6">
               {mongoUser.personalWebsite && (
@@ -68,7 +70,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
                   imgUrl="/assets/icons/link.svg"
                   alt="portfolio"
                   value="Portfolio"
-                  href={mongoUser.portfolioWebsite}
+                  href={mongoUser?.portfolioWebsite}
                   textStyles="text-blue-600"
                 />
               )}
@@ -77,7 +79,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
                 <Metric
                   imgUrl="/assets/icons/location.svg"
                   alt="location"
-                  value={mongoUser.location}
+                  value={mongoUser?.location}
                 />
               )}
 
@@ -91,8 +93,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
           </div>
           <div className="mt-1 flex self-end justify-self-end max-sm:mb-5 max-sm:w-full sm:mt-3 sm:justify-end">
             <SignedIn>
-              {userId === mongoUser.clerkID && (
-                <Link href="/profile/edit">
+              {userId === mongoUser?.clerkID && (
+                <Link href="/profile/edit" passHref>
                   <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4">
                     Edit Profile
                   </Button>
@@ -106,10 +108,17 @@ const Page = async ({ params, searchParams }: URLProps) => {
       <div className="grid w-full grid-cols-2 gap-3  md:grid-cols-4">
         <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row sm:flex-wrap">
           <p className="text-dark300_light900 text-xs sm:text-sm">
-            {mongoUser.questions.length} Questions
+            {mongoUser?.questions?.length}{" "}
+            {mongoUser?.questions?.length > 1 ||
+            mongoUser?.questions?.length === 0
+              ? "Questions"
+              : "Question"}
           </p>
           <p className="text-dark300_light900 text-xs sm:text-sm">
-            {mongoUser.answers.length} Answers
+            {mongoUser?.answers?.length}{" "}
+            {mongoUser?.answers?.length > 1 || mongoUser?.answers?.length === 0
+              ? "Answers"
+              : "Answer"}
           </p>
         </section>
         <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
@@ -149,8 +158,11 @@ const Page = async ({ params, searchParams }: URLProps) => {
       </div>
 
       <div className="flex justify-between gap-6">
-        <Tabs defaultValue="Posts" className="mt-5 min-w-full lg:min-w-[600px]">
-          <TabsList className="background-light800_dark400 text-light400_light500 mb-4 min-h-[42px] rounded-lg p-6">
+        <Tabs
+          defaultValue="Posts"
+          className="mt-5 min-w-full lg:min-w-[600px] "
+        >
+          <TabsList className="background-light800_dark400 text-light400_light500 mb-4 min-h-[42px] gap-4 rounded-lg p-6">
             <TabsTrigger value="Posts" className="tab">
               Posts
             </TabsTrigger>
@@ -162,69 +174,57 @@ const Page = async ({ params, searchParams }: URLProps) => {
             value="Posts"
             className="flex w-full flex-col justify-center gap-6"
           >
-            {userQuestions.length > 0
-              ? userQuestions.map((question: any) => (
-                  <QuestionCard
-                    _id={question._id}
-                    key={question._id}
-                    author={question.author}
-                    title={question.title}
-                    createdAt={question.createdAt}
-                    upvotes={question.upvotes}
-                    answers={question.answers}
-                    views={question.views}
-                    tags={question.tags.map((tag: []) => tag)}
+            {userQuestions.length > 0 ? (
+              <QuestionTab
+                searchParams={searchParams}
+                userId={mongoUser._id}
+                clerkID={userId}
+              />
+            ) : (
+              {
+                ...(userId === mongoUser.clerkID ? (
+                  <NoResult
+                    description="You haven't posted any questions yet."
+                    title="No posts yet"
+                    buttonHref="/ask-question"
+                    buttonTitle="Ask a question"
                   />
-                ))
-              : {
-                  ...(userId === mongoUser.clerkID ? (
-                    <NoResult
-                      description="You haven't posted any questions yet."
-                      title="No posts yet"
-                      buttonHref="/ask-question"
-                      buttonTitle="Ask a question"
-                    />
-                  ) : (
-                    <NoResult
-                      description="This user hasn't posted any questions yet."
-                      title="No posts yet"
-                    />
-                  )),
-                }}
+                ) : (
+                  <NoResult
+                    description="This user hasn't posted any questions yet."
+                    title="No posts yet"
+                  />
+                )),
+              }
+            )}
           </TabsContent>
           <TabsContent
             value="Answers"
             className="flex w-full flex-col items-center justify-center gap-6"
           >
-            {mongoUser.answers.length > 0
-              ? mongoUser.answers.map((answer: any) => (
-                  <QuestionCard
-                    _id={answer._id}
-                    key={answer._id}
-                    author={answer.author}
-                    title={answer.title}
-                    createdAt={answer.createdAt}
-                    upvotes={answer.upvotes}
-                    answers={answer.answers}
-                    views={answer.views}
-                    tags={answer.tags.map((tag: []) => tag)}
+            {mongoUser.answers.length > 0 ? (
+              <AnswerTab
+                searchParams={searchParams}
+                userId={mongoUser._id}
+                clerkID={JSON.stringify(mongoUser.clerkID)}
+              />
+            ) : (
+              {
+                ...(userId === mongoUser.clerkID ? (
+                  <NoResult
+                    description="You haven't answered any questions yet."
+                    title="No answers yet"
+                    buttonHref="/"
+                    buttonTitle="Explore questions"
                   />
-                ))
-              : {
-                  ...(userId === mongoUser.clerkID ? (
-                    <NoResult
-                      description="You haven't answered any questions yet."
-                      title="No answers yet"
-                      buttonHref="/"
-                      buttonTitle="Explore questions"
-                    />
-                  ) : (
-                    <NoResult
-                      description="This user hasn't answered any questions yet."
-                      title="No answers yet"
-                    />
-                  )),
-                }}
+                ) : (
+                  <NoResult
+                    description="This user hasn't answered any questions yet."
+                    title="No answers yet"
+                  />
+                )),
+              }
+            )}
           </TabsContent>
         </Tabs>
 

@@ -86,7 +86,7 @@ const MobileNav = () => {
             alt="TechFlow"
           />
           <p className="h2-bold text-dark100_light900 font-spaceGrotesk">
-            Tech <span className="text-primary-500">Flow</span>
+            Tech<span className="text-primary-500">Flow</span>
           </p>
         </Link>
         <div className="flex h-full flex-col justify-between">
