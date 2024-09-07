@@ -87,8 +87,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
       </div>
 
       {/* Question content */}
-
-      <div className="mt-5 max-w-full">
+      <div className="mt-3 max-w-full p-0">
         <ParseHTML data={question.content} />
       </div>
 

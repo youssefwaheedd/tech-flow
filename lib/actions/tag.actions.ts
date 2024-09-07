@@ -9,8 +9,10 @@ import {
   GetAllTagsParams,
   GetQuestionsByTagIdParams,
   GetTopInteractedTagsParams,
+  UpdateUserParams,
 } from "./shared.types";
 import path from "path";
+import { revalidatePath } from "next/cache";
 
 const tempTags = [
   { _id: 1, name: "react" },
@@ -75,5 +77,19 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
     return tempTags;
   } catch (error) {
     console.error(error);
+  }
+}
+
+export async function updateUser(params: UpdateUserParams) {
+  try {
+    await connectToDatabase();
+    const { clerkID, updateData, path } = params;
+    await User.findOneAndUpdate({ clerkID }, updateData, {
+      new: true,
+    });
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }

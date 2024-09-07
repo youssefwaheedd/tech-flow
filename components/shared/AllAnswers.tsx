@@ -19,7 +19,11 @@ const AllAnswers = async ({ questionId, userId, totalAnswers }: Props) => {
     <div className="mt-10 w-full">
       <div>
         {answers?.map((answer) => (
-          <article className="light-border border-b py-10" key={answer._id}>
+          <article
+            id={`${answer._id}`}
+            className="light-border border-b py-10"
+            key={answer._id}
+          >
             <div className="flex items-center justify-between">
               {/* Span ID */}
               <div className="mb-8 flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
@@ -38,10 +42,11 @@ const AllAnswers = async ({ questionId, userId, totalAnswers }: Props) => {
                     <p className="body-semibold text-dark300_light700">
                       {answer.author.name}{" "}
                     </p>
-                    <p className="small-regular text-light400_light500 ml-2 mt-0.5 line-clamp-1">
+                    <p className="small-regular text-light400_light500 mt-0.5 line-clamp-1 sm:ml-2">
                       answered {getTimeStamp(answer.createdAt).createdAtValue}{" "}
                       {getTimeStamp(answer.createdAt).dateFormat}
-                      {getTimeStamp(answer.createdAt).createdAtValue > 1
+                      {getTimeStamp(answer.createdAt).createdAtValue > 1 ||
+                      getTimeStamp(answer.createdAt).createdAtValue === 0
                         ? "s"
                         : ""}{" "}
                       ago

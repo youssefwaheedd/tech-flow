@@ -65,7 +65,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
               <p className="text-dark300_light900 mt-3">{mongoUser?.bio}</p>
             )}
             <div className="mt-5 flex flex-wrap gap-6">
-              {mongoUser.personalWebsite && (
+              {mongoUser.portfolioWebsite && (
                 <Metric
                   imgUrl="/assets/icons/link.svg"
                   alt="portfolio"

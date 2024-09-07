@@ -1,4 +1,14 @@
 /* General code block styles (without language specification) */
+
+/* General text content styling */
+.text-container {
+  max-width: 100%; /* Ensures the container does not exceed the screen width */
+  word-wrap: break-word; /* Break long words */
+  word-break: break-word; /* Break long words if necessary */
+  overflow-wrap: break-word; /* Handle overflow for very long words */
+  overflow-x: hidden; /* Prevent horizontal overflow for non-code content */
+}
+
 code {
   background-color: #16164a; /* Dark background from Holi theme */
   color: #d6e7ff; /* Light text color from Holi theme */

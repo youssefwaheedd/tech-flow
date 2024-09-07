@@ -37,7 +37,9 @@ const ParseHTML = ({ data }: Props) => {
   }, []);
 
   return (
-    <div className="text-dark300_light700 mt-10 max-w-full">{parse(data)}</div>
+    <div className="text-container text-dark300_light700 mt-10 max-w-full overflow-hidden break-words">
+      {parse(data)}
+    </div>
   );
 };
 

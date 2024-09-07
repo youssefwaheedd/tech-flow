@@ -27,21 +27,19 @@ export const createUser = async (params: CreateUserParams) => {
   }
 };
 
-export const updateUser = async (params: UpdateUserParams) => {
+export async function updateUser(params: UpdateUserParams) {
   try {
     await connectToDatabase();
-    await User.findOneAndUpdate(
-      {
-        clerkID: params.clerkID,
-      },
-      params.updateData,
-      { new: true }
-    );
-    revalidatePath(params.path);
+    const { clerkID, updateData, path } = params;
+    await User.findOneAndUpdate({ clerkID }, updateData, {
+      new: true,
+    });
+    revalidatePath(path);
   } catch (error) {
-    console.error(error);
+    console.log(error);
+    throw error;
   }
-};
+}
 
 export const getUsers = async (params: GetAllUsersParams) => {
   // const { page = 1, pageSize = 20, filter, searchQuery } = params;
