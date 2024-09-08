@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 
 interface Props {
   route: string;
@@ -19,6 +22,36 @@ const LocalSearch = ({
   imgSrc,
   otherClasses,
 }: Props) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const query = searchParams.get("q");
+
+  const [search, setSearch] = React.useState(query || "");
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (search) {
+        const newUrl = formUrlQuery({
+          params: searchParams.toString(),
+          key: "q",
+          value: search,
+        });
+        router.push(newUrl, { scroll: false });
+      } else {
+        if (pathname === route) {
+          const newUrl = removeKeysFromQuery({
+            params: searchParams.toString(),
+            keysToRemove: ["q"],
+          });
+          router.push(newUrl, { scroll: false });
+        }
+      }
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [search, route, pathname, router, searchParams, query]);
+
   return (
     <div
       className={`background-light800_darkgradient relative flex min-h-[56px] w-full grow items-center gap-2 rounded-xl px-4 ${otherClasses}`}
@@ -35,9 +68,9 @@ const LocalSearch = ({
       <Input
         type="text"
         placeholder={placeholder}
-        value=""
+        value={search}
         className="paragraph-regular no-focus placeholder text-dark400_light700 border-none bg-transparent shadow-none outline-none"
-        onChange={() => {}}
+        onChange={(e) => setSearch(e.target.value)}
       />
       {iconPosition === "right" && (
         <Image

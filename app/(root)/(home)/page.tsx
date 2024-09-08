@@ -10,8 +10,10 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import { getQuestions } from "@/lib/actions/question.action";
-const Home = async () => {
-  const result: any = await getQuestions({});
+import { SearchParamsProps } from "@/types";
+
+const Home = async ({ searchParams }: SearchParamsProps) => {
+  const result: any = await getQuestions({ searchQuery: searchParams.q });
 
   return (
     <>
@@ -40,7 +42,7 @@ const Home = async () => {
         />
         <HomeFilters />
       </div>
-      <div className="mt-10 flex w-full flex-col gap-[24px]">
+      <div className="mt-10 flex w-full  flex-col gap-[24px] ">
         {result?.questions?.length > 0 ? (
           result?.questions?.map((question: any) => (
             <QuestionCard

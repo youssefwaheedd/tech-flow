@@ -18,6 +18,8 @@ import {
 } from "./shared.types";
 import Answer from "../models/answer.model";
 import Interaction from "../models/interaction.model";
+import { FilterQuery } from "mongoose";
+import { Filter } from "lucide-react";
 
 export async function createQuestion(params: CreateQuestionParams) {
   try {
@@ -61,7 +63,19 @@ export async function createQuestion(params: CreateQuestionParams) {
 export async function getQuestions(params: GetQuestionsParams) {
   try {
     await connectToDatabase();
-    const questions: any = await Question.find({})
+    const { searchQuery } = params;
+    const query: FilterQuery<typeof Question> = {};
+    if (searchQuery) {
+      query.$or = [
+        {
+          title: { $regex: new RegExp(searchQuery, "i") },
+        },
+        {
+          content: { $regex: new RegExp(searchQuery, "i") },
+        },
+      ];
+    }
+    const questions: any = await Question.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
       .sort({ createdAt: -1 });
@@ -183,10 +197,22 @@ export async function getUserSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     await connectToDatabase();
 
-    const { clerkID } = params;
+    const { clerkID, searchQuery } = params;
+    const query: FilterQuery<typeof Question> = {};
+    if (searchQuery) {
+      query.$or = [
+        {
+          title: { $regex: new RegExp(searchQuery, "i") },
+        },
+        {
+          content: { $regex: new RegExp(searchQuery, "i") },
+        },
+      ];
+    }
 
     const user = await User.findOne({ clerkID }).populate({
       path: "savedQuestions",
+      match: query,
       model: "Question",
       populate: [
         {
@@ -206,7 +232,6 @@ export async function getUserSavedQuestions(params: GetSavedQuestionsParams) {
       throw new Error("User not found");
     }
 
-    // Return the populated saved questions
     return user.savedQuestions;
   } catch (error: any) {
     throw new Error("Error fetching user saved questions:", error);
@@ -265,5 +290,21 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
     revalidatePath(path);
   } catch (error) {
     console.error(error);
+  }
+}
+
+export async function getHotQuestions() {
+  try {
+    await connectToDatabase(); // Ensure database is connected
+
+    // Use aggregation to sort if any fields are arrays
+    const questions = await Question.find({})
+      .sort({ views: -1, upvotes: -1 })
+      .limit(5);
+
+    return { questions };
+  } catch (error) {
+    console.error("Error fetching hot questions:", error);
+    return { error: "Failed to retrieve hot questions" }; // Return an error response for better handling
   }
 }

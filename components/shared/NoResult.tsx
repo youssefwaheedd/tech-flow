@@ -15,7 +15,7 @@ const NoResult = ({
   buttonTitle?: string;
 }) => {
   return (
-    <div className="mt-10 flex flex-col items-center justify-center gap-2">
+    <div className="mt-10 flex flex-col items-center justify-center gap-2 ">
       <Image
         src="/assets/images/dark-illustration.png"
         alt="No result"

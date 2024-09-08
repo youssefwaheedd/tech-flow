@@ -93,3 +93,14 @@ export async function updateUser(params: UpdateUserParams) {
     throw error;
   }
 }
+
+export async function getPopularTags() {
+  try {
+    await connectToDatabase();
+    const tags = await Tag.find({}).sort({ questions: -1 }).limit(5);
+
+    return { tags };
+  } catch (error) {
+    console.error(error);
+  }
+}

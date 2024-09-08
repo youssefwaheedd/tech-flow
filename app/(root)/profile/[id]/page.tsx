@@ -105,8 +105,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
         </div>
       </div>
       <h2 className="text-dark300_light900 h2-bold mb-3 mt-7">Stats</h2>
-      <div className="grid w-full grid-cols-2 gap-3  md:grid-cols-4">
-        <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row sm:flex-wrap">
+      <div className="mt-5 grid w-full grid-cols-2 gap-3 md:grid-cols-4">
+        <section className="background-light900_dark200  flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row sm:flex-wrap">
           <p className="text-dark300_light900 text-xs sm:text-sm">
             {mongoUser?.questions?.length}{" "}
             {mongoUser?.questions?.length > 1 ||
@@ -121,7 +121,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
               : "Answer"}
           </p>
         </section>
-        <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
+        <section className="background-light900_dark200  flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
           <Image
             src="/assets/icons/gold-medal.svg"
             alt="gold badge"
@@ -132,7 +132,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
             <p>0</p> <p>Gold Badges</p>
           </div>
         </section>
-        <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
+        <section className="background-light900_dark200  flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
           <Image
             src="/assets/icons/silver-medal.svg"
             alt="silver badge"
@@ -143,7 +143,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
             <p>0</p> <p>Silver Badges</p>
           </div>
         </section>
-        <section className="background-light900_dark200 mt-5 flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
+        <section className="background-light900_dark200  flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
           <Image
             src="/assets/icons/bronze-medal.svg"
             alt="bronze badge"

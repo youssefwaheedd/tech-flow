@@ -6,12 +6,16 @@ import LocalSearch from "../../../components/shared/search/LocalSearch";
 import { QuestionFilters } from "../../../constants/filters";
 import { auth } from "@clerk/nextjs/server";
 import { getUserSavedQuestions } from "../../../lib/actions/question.action";
+import { SearchParamsProps } from "@/types";
 
-const page = async () => {
+const page = async ({ searchParams }: SearchParamsProps) => {
   const { userId: clerkID } = auth();
   let result;
   if (clerkID) {
-    result = await getUserSavedQuestions({ clerkID });
+    result = await getUserSavedQuestions({
+      clerkID,
+      searchQuery: searchParams.q,
+    });
   }
 
   return (
@@ -22,7 +26,7 @@ const page = async () => {
 
       <div className="max-xs:flex-col mt-11 flex  items-center justify-between gap-5 max-md:flex-row">
         <LocalSearch
-          route="/"
+          route="/collection"
           placeholder="Search your saved questions..."
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"

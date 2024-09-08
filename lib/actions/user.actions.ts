@@ -15,6 +15,7 @@ import Question, { IQuestion } from "../models/question.model";
 import Tag from "../models/tag.model";
 import Answer from "../models/answer.model";
 import Interaction from "../models/interaction.model";
+import { FilterQuery } from "mongoose";
 
 export const createUser = async (params: CreateUserParams) => {
   try {
@@ -42,10 +43,17 @@ export async function updateUser(params: UpdateUserParams) {
 }
 
 export const getUsers = async (params: GetAllUsersParams) => {
-  // const { page = 1, pageSize = 20, filter, searchQuery } = params;
+  const { page = 1, pageSize = 20, filter, searchQuery } = params;
+  const query: FilterQuery<typeof User> = {};
+  if (searchQuery) {
+    query.$or = [
+      { name: { $regex: searchQuery, $options: "i" } },
+      { username: { $regex: searchQuery, $options: "i" } },
+    ];
+  }
   try {
     await connectToDatabase();
-    const users = await User.find({}).sort({ joinedAt: -1 });
+    const users = await User.find(query).sort({ joinedAt: -1 });
     return { users };
   } catch (error) {
     console.error(error);

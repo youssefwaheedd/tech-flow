@@ -33,10 +33,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
         tag created {createdAtValue} {dateFormat}
         {createdAtValue > 1 ? "s" : ""} ago by{" "}
         <Link
-          className="cursor-pointer"
+          className="text-primary-500 cursor-pointer"
           href={`/profile/${mongoUser?.clerkID}`}
         >
-          {mongoUser?.username}
+          @{mongoUser?.username}
         </Link>
       </h4>
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">

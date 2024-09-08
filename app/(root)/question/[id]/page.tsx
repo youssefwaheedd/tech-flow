@@ -39,7 +39,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
             alt="author"
             width={30}
             height={30}
-            className="rounded-full object-contain"
+            className="size-[30px] rounded-full object-cover"
           />
           <p className="text-dark300_light900 flex-1 text-xs font-bold">
             {author.name}

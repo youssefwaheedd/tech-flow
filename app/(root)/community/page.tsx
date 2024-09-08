@@ -8,9 +8,10 @@ import UserCard from "@/components/cards/UserCard";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Filters } from "@/components/shared/Filters";
 import { UserFilters } from "@/constants/filters";
+import { SearchParamsProps } from "@/types";
 
-const Page = async () => {
-  const result = await getUsers({});
+const Page = async ({ searchParams }: SearchParamsProps) => {
+  const result = await getUsers({ searchQuery: searchParams.q });
   const plainUsers = result?.users.map((user) => ({
     _id: user._id.toString(), // Convert _id if needed
     clerkID: user.clerkID,
@@ -47,12 +48,19 @@ const Page = async () => {
         </section>
       ) : (
         <div className="mt-11 w-full items-center justify-center">
-          <NoResult
-            title="No users found"
-            description="No users found, be the first to join our community!"
-            buttonHref="/sign-up"
-            buttonTitle="Join now!"
-          />
+          {searchParams?.q?.length === 0 ? (
+            <NoResult
+              title="No users found"
+              description="No users found, be the first to join our community!"
+              buttonHref="/sign-up"
+              buttonTitle="Join now!"
+            />
+          ) : (
+            <NoResult
+              title="No users found"
+              description="No users found, try searching for another username or name."
+            />
+          )}
         </div>
       )}
     </>
