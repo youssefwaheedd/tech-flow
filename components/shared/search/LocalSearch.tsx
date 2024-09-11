@@ -13,6 +13,7 @@ interface Props {
   iconPosition: "left" | "right";
   imgSrc: string;
   otherClasses?: string;
+  filter?: string;
 }
 
 const LocalSearch = ({

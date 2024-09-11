@@ -11,6 +11,8 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { voteAnswer } from "@/lib/actions/answer.actions";
 import { viewQuestion } from "@/lib/actions/interaction.action";
+import { auth } from "@clerk/nextjs/server";
+import Swal from "sweetalert2";
 
 interface Props {
   type: string;
@@ -21,6 +23,7 @@ interface Props {
   isUpvoted: boolean;
   isDownvoted: boolean;
   isSaved?: boolean;
+  disabled: boolean;
 }
 
 const Votes = ({
@@ -32,6 +35,7 @@ const Votes = ({
   isUpvoted,
   isDownvoted,
   isSaved,
+  disabled,
 }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -123,6 +127,30 @@ const Votes = ({
     }
   };
 
+  const handleUserNotLoggedIn = (action: string) => {
+    Swal.fire({
+      toast: true,
+      title: "Login Required",
+      text: `Please log in to ${action === "vote" ? "vote" : "save"} this ${type === "question" ? "question" : "answer"}!`,
+      icon: "warning", // Icons: 'warning', 'error', 'success', 'info'
+      showCancelButton: true, // Adds a cancel button
+      confirmButtonText: "Login", // Custom text for the confirm button
+      cancelButtonText: "Cancel", // Custom text for the cancel button
+
+      customClass: {
+        popup: "bg-blue-500 text-black p-4 rounded-lg shadow-lg", // Custom styling for the popup
+        title: "font-bold text-lg", // Title styling
+        confirmButton: "bg-primary-500 text-white px-4 py-2 rounded-lg", // Confirm button styling
+        cancelButton: "bg-red-500 text-black px-4 py-2 rounded-lg", // Cancel button styling
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Action to perform when confirmed, like redirecting to login
+        window.location.href = "/sign-in";
+      }
+    });
+  };
+
   useEffect(() => {
     const ViewQuestion = async () => {
       await viewQuestion({
@@ -143,7 +171,9 @@ const Votes = ({
             width={18}
             height={18}
             className="cursor-pointer"
-            onClick={() => handleVote("upvote")}
+            onClick={() => {
+              disabled ? handleUserNotLoggedIn("vote") : handleVote("upvote");
+            }}
           />
           <div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
             <p className="subtle-medium text-dark400_light900">
@@ -160,7 +190,9 @@ const Votes = ({
             width={18}
             height={18}
             className="cursor-pointer"
-            onClick={() => handleVote("downvote")}
+            onClick={() => {
+              disabled ? handleUserNotLoggedIn("vote") : handleVote("downvote");
+            }}
           />
           <div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
             <p className="subtle-medium text-dark400_light900">
@@ -176,7 +208,9 @@ const Votes = ({
           width={18}
           height={18}
           className="cursor-pointer"
-          onClick={handleSave}
+          onClick={() => {
+            disabled ? handleUserNotLoggedIn("save") : handleSave();
+          }}
         />
       )}
     </div>

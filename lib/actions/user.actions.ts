@@ -51,9 +51,19 @@ export const getUsers = async (params: GetAllUsersParams) => {
       { username: { $regex: searchQuery, $options: "i" } },
     ];
   }
+
+  let sortOptions = {};
+  if (filter === "new_users") {
+    sortOptions = { joinedAt: -1 };
+  } else if (filter === "old_users") {
+    sortOptions = { joinedAt: 1 };
+  } else if (filter === "top_contributors") {
+    sortOptions = { reputation: -1 };
+  }
+
   try {
     await connectToDatabase();
-    const users = await User.find(query).sort({ joinedAt: -1 });
+    const users = await User.find(query).sort(sortOptions);
     return { users };
   } catch (error) {
     console.error(error);

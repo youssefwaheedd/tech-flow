@@ -41,13 +41,22 @@ export async function getAnswers(params: GetAnswersParams) {
   try {
     // Ensure the database connection is established before querying
     await connectToDatabase(); // Assuming this function is async
-
-    const { questionId } = params;
+    const { questionId, sortBy, page, pageSize } = params;
+    let sortOptions = {};
+    if (sortBy === "recent") {
+      sortOptions = { createdAt: -1 };
+    } else if (sortBy === "old") {
+      sortOptions = { createdAt: 1 };
+    } else if (sortBy === "lowestUpvotes") {
+      sortOptions = { upvotes: 1 };
+    } else if (sortBy === "highestUpvotes") {
+      sortOptions = { upvotes: -1 };
+    }
 
     // Fetch answers from the database with populated author details
     const answers = await Answer.find({ question: questionId })
       .populate("author", "_id clerkID name avatar")
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     // Return the fetched answers
     return { answers };

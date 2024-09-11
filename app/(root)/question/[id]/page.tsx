@@ -10,12 +10,19 @@ import { AnswerFilters } from "@/constants/filters";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.actions";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { SearchParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Page = async ({ params }: { params: { id: string } }) => {
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: any;
+  searchParams: any;
+}) => {
   const question = await getQuestionById({ questionId: params.id });
   const author = question.author;
   const { createdAtValue, dateFormat } = getTimeStamp(question.createdAt);
@@ -54,6 +61,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
           isUpvoted={question.upvotes.includes(mongoUser?._id)}
           isDownvoted={question.downvotes.includes(mongoUser?._id)}
           isSaved={mongoUser?.savedQuestions.includes(question._id)}
+          disabled={!clerkID}
         />
       </div>
 
@@ -116,14 +124,17 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
       <AllAnswers
         questionId={JSON.stringify(question._id)}
-        userId={JSON.stringify(mongoUser._id)}
+        userId={JSON.stringify(mongoUser?._id)}
         totalAnswers={question.answers.length}
+        filter={searchParams?.filter}
+        page={searchParams?.page}
       />
 
       <Answer
         questionContent={question.content}
         questionId={JSON.stringify(question._id)}
-        authorId={JSON.stringify(mongoUser._id)}
+        authorId={JSON.stringify(mongoUser?._id)}
+        disabled={!clerkID}
       />
     </div>
   );

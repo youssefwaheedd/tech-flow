@@ -5,15 +5,30 @@ import Link from "next/link";
 import React from "react";
 import ParseHTML from "./ParseHTML";
 import Votes from "./Votes";
+// import { useSearchParams } from "next/navigation";
 
 interface Props {
   questionId: string;
   userId: string;
   totalAnswers: number;
+  filter?: string;
+  page?: string;
 }
 
-const AllAnswers = async ({ questionId, userId, totalAnswers }: Props) => {
-  const result = await getAnswers({ questionId: JSON.parse(questionId) });
+const AllAnswers = async ({
+  questionId,
+  userId,
+  totalAnswers,
+  filter,
+  page,
+}: Props) => {
+  // const searchParams = useSearchParams();
+
+  const result = await getAnswers({
+    questionId: JSON.parse(questionId),
+    page: page ? +page : 1,
+    sortBy: filter,
+  });
   const answers = result?.answers;
   return (
     <div className="mt-10 w-full">
@@ -60,8 +75,17 @@ const AllAnswers = async ({ questionId, userId, totalAnswers }: Props) => {
                     userId={userId}
                     upvotes={answer.upvotes.length}
                     downvotes={answer.downvotes.length}
-                    isUpvoted={answer.upvotes.includes(JSON.parse(userId))}
-                    isDownvoted={answer.downvotes.includes(JSON.parse(userId))}
+                    isUpvoted={
+                      userId
+                        ? answer.upvotes.includes(JSON.parse(userId))
+                        : false
+                    }
+                    isDownvoted={
+                      userId
+                        ? answer.downvotes.includes(JSON.parse(userId))
+                        : false
+                    }
+                    disabled={!userId}
                   />
                 </div>
               </div>

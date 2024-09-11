@@ -63,7 +63,8 @@ export async function createQuestion(params: CreateQuestionParams) {
 export async function getQuestions(params: GetQuestionsParams) {
   try {
     await connectToDatabase();
-    const { searchQuery } = params;
+    const { page = 1, pageSize = 10, searchQuery, filter } = params;
+
     const query: FilterQuery<typeof Question> = {};
     if (searchQuery) {
       query.$or = [
@@ -75,10 +76,21 @@ export async function getQuestions(params: GetQuestionsParams) {
         },
       ];
     }
+    let sortOptions = {};
+    if (filter === "unanswered") {
+      query.answers = { $size: 0 };
+    } else if (filter === "newest") {
+      sortOptions = { createdAt: -1 };
+    } else if (filter === "recommended") {
+      sortOptions = { upvotes: -1 };
+    } else if (filter === "frequent") {
+      sortOptions = { views: -1 };
+    }
+
     const questions: any = await Question.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
     return { questions };
   } catch (error) {
     console.error(error);
@@ -197,7 +209,7 @@ export async function getUserSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     await connectToDatabase();
 
-    const { clerkID, searchQuery } = params;
+    const { clerkID, searchQuery, page = 1, pageSize = 10, filter } = params;
     const query: FilterQuery<typeof Question> = {};
     if (searchQuery) {
       query.$or = [
@@ -208,6 +220,20 @@ export async function getUserSavedQuestions(params: GetSavedQuestionsParams) {
           content: { $regex: new RegExp(searchQuery, "i") },
         },
       ];
+    }
+
+    let sortOptions = {};
+
+    if (filter === "most_recent") {
+      sortOptions = { createdAt: -1 };
+    } else if (filter === "most_voted") {
+      sortOptions = { upvotes: -1 };
+    } else if (filter === "most_answered") {
+      sortOptions = { answers: -1 };
+    } else if (filter === "oldest") {
+      sortOptions = { createdAt: 1 };
+    } else if (filter === "most_viewed") {
+      sortOptions = { views: -1 };
     }
 
     const user = await User.findOne({ clerkID }).populate({
@@ -224,7 +250,7 @@ export async function getUserSavedQuestions(params: GetSavedQuestionsParams) {
           model: "Tag",
         },
       ],
-      options: { sort: { createdAt: -1 } },
+      options: { sort: sortOptions },
     });
 
     // Check if user was found

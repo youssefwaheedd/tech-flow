@@ -57,14 +57,12 @@ const UserCard = ({ user }: Props) => {
       <div className="flex w-full items-center justify-center gap-3">
         {userTopInteractedTags.length ? (
           userTopInteractedTags.map((tag: any) => (
-            <div key={tag._id} className="line-clamp-1 w-20">
-              <RenderTag
-                key={tag._id}
-                _id={tag._id}
-                name={tag.name}
-                showCount={false}
-              />
-            </div>
+            <RenderTag
+              key={tag._id}
+              _id={tag._id}
+              name={tag.name}
+              showCount={false}
+            />
           ))
         ) : (
           <Badge>No tags yet</Badge>

@@ -11,7 +11,10 @@ import { UserFilters } from "@/constants/filters";
 import { SearchParamsProps } from "@/types";
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
-  const result = await getUsers({ searchQuery: searchParams.q });
+  const result = await getUsers({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+  });
   const plainUsers = result?.users.map((user) => ({
     _id: user._id.toString(), // Convert _id if needed
     clerkID: user.clerkID,

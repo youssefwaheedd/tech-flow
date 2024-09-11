@@ -20,9 +20,9 @@ export const QuestionFilters = [
 ];
 
 export const TagFilters = [
+  { name: "A - Z", value: "name" },
   { name: "Popular", value: "popular" },
   { name: "Recent", value: "recent" },
-  { name: "Name", value: "name" },
   { name: "Old", value: "old" },
 ];
 

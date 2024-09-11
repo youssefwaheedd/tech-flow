@@ -13,6 +13,8 @@ import {
 } from "./shared.types";
 import path from "path";
 import { revalidatePath } from "next/cache";
+import { FilterQuery, model } from "mongoose";
+import Question from "../models/question.model";
 
 const tempTags = [
   { _id: 1, name: "react" },
@@ -23,16 +25,35 @@ const tempTags = [
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     await connectToDatabase();
+    const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const query: FilterQuery<typeof Tag> = {};
+    if (searchQuery) {
+      query.$or = [{ name: { $regex: searchQuery, $options: "i" } }];
+    }
+
+    let sortOptions = {};
+    if (filter === "popular") {
+      sortOptions = { questionsCount: -1 };
+    } else if (filter === "recent") {
+      sortOptions = { createdAt: -1 };
+    } else if (filter === "old") {
+      sortOptions = { createdAt: 1 };
+    } else if (filter === "name") {
+      sortOptions = { name: 1 };
+    } else {
+      sortOptions = { createdAt: 1 };
+    }
 
     // Use aggregation to sort by the length of the questions array
     const tags = await Tag.aggregate([
+      { $match: query },
       {
         $addFields: {
           questionsCount: { $size: "$questions" },
         },
       },
       {
-        $sort: { questionsCount: -1 },
+        $sort: sortOptions,
       },
     ]);
 
@@ -46,10 +67,15 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   try {
     await connectToDatabase();
     const { tagId, page = 1, pageSize = 10, searchQuery } = params;
+    const query: FilterQuery<typeof Question> = {};
+    if (searchQuery) {
+      query.$or = [{ title: { $regex: searchQuery, $options: "i" } }];
+    }
     const tag = await Tag.findById(tagId).populate({
       path: "questions",
       model: "Question",
       options: { sort: { createdAt: -1 } },
+      match: query,
       populate: [
         { path: "author", model: "User" },
         {
@@ -58,6 +84,7 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
         },
       ],
     });
+
     return tag;
   } catch (error) {
     console.error(error);

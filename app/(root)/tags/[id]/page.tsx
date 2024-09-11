@@ -29,16 +29,6 @@ const Page = async ({ params, searchParams }: URLProps) => {
       <h1 className="text-dark300_light900 h1-bold self-start capitalize">
         {tag.name} Questions
       </h1>
-      <h4 className="text-dark300_light900 mt-3 self-start">
-        tag created {createdAtValue} {dateFormat}
-        {createdAtValue > 1 ? "s" : ""} ago by{" "}
-        <Link
-          className="text-primary-500 cursor-pointer"
-          href={`/profile/${mongoUser?.clerkID}`}
-        >
-          @{mongoUser?.username}
-        </Link>
-      </h4>
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           route={`/tags/${params.id}`}

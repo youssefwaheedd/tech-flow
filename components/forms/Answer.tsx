@@ -20,14 +20,16 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.actions";
 import { usePathname } from "next/navigation";
+import Swal from "sweetalert2";
 
 interface Props {
   authorId: string;
   questionId: string;
   questionContent: string;
+  disabled: boolean;
 }
 
-const Answer = ({ authorId, questionContent, questionId }: Props) => {
+const Answer = ({ authorId, questionContent, questionId, disabled }: Props) => {
   const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -73,6 +75,31 @@ const Answer = ({ authorId, questionContent, questionId }: Props) => {
       answer: "",
     },
   });
+
+  const handleUserNotLoggedIn = () => {
+    Swal.fire({
+      toast: true,
+      title: "Login Required",
+      text: `Please log in to submit an answer!`,
+      icon: "warning", // Icons: 'warning', 'error', 'success', 'info'
+      showCancelButton: true, // Adds a cancel button
+      confirmButtonText: "Login", // Custom text for the confirm button
+      cancelButtonText: "Cancel", // Custom text for the cancel button
+
+      customClass: {
+        popup: "bg-blue-500 text-black p-4 rounded-lg shadow-lg", // Custom styling for the popup
+        title: "font-bold text-lg", // Title styling
+        confirmButton: "bg-primary-500 text-white px-4 py-2 rounded-lg", // Confirm button styling
+        cancelButton: "bg-red-500 text-black px-4 py-2 rounded-lg", // Cancel button styling
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Action to perform when confirmed, like redirecting to login
+        window.location.href = "/sign-in";
+      }
+    });
+  };
+
   const editorRef = useRef(null);
   return (
     <div className="mt-10 w-full">
@@ -83,7 +110,9 @@ const Answer = ({ authorId, questionContent, questionId }: Props) => {
         <Button
           className="btn light-border-2 text-primary-500 dark:text-primary-500  w-fit gap-1.5 px-4 py-2.5  shadow-none"
           disabled={isGenerating}
-          onClick={handleGenerateAIAnswer}
+          onClick={() => {
+            disabled ? handleUserNotLoggedIn() : handleGenerateAIAnswer();
+          }}
         >
           <Image
             src="/assets/icons/stars.svg"
@@ -97,7 +126,14 @@ const Answer = ({ authorId, questionContent, questionId }: Props) => {
       </div>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(handleCreateAnswer)}
+          onSubmit={(event) => {
+            event.preventDefault(); // Prevents the form from reloading the page
+            if (disabled) {
+              handleUserNotLoggedIn(); // Shows the SweetAlert when the user is not logged in
+            } else {
+              form.handleSubmit(handleCreateAnswer)(event); // Handles form submission when not disabled
+            }
+          }}
           className="flex w-full flex-col gap-10"
         >
           <FormField

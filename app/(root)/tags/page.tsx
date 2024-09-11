@@ -2,12 +2,16 @@ import { Filters } from "@/components/shared/Filters";
 import NoResult from "@/components/shared/NoResult";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Badge } from "@/components/ui/badge";
-import { UserFilters } from "@/constants/filters";
+import { TagFilters } from "@/constants/filters";
 import { getAllTags } from "@/lib/actions/tag.actions";
+import { SearchParamsProps } from "@/types";
 import Link from "next/link";
 
-const Page = async () => {
-  const result = await getAllTags({});
+const Page = async ({ searchParams }: SearchParamsProps) => {
+  const result = await getAllTags({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+  });
 
   return (
     <>
@@ -23,7 +27,7 @@ const Page = async () => {
         />
 
         <Filters
-          filters={UserFilters}
+          filters={TagFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </div>
@@ -37,7 +41,7 @@ const Page = async () => {
               className="shadow-light100_darknone"
             >
               <article className="background-light900_dark200 light-border flex w-full max-w-[260px] flex-col items-center justify-center rounded-2xl border p-5 sm:w-[260px] sm:justify-center">
-                <Badge className="body-medium background-light800_dark400 text-light400_light500 line-clamp-1 w-fit rounded-md border-none px-4 py-2 uppercase">
+                <Badge className="body-medium background-light800_dark400 text-light400_light500 !line-clamp-1 w-fit whitespace-nowrap rounded-md border-none px-4 py-2 text-center uppercase">
                   {tag.name}
                 </Badge>
 
@@ -46,13 +50,6 @@ const Page = async () => {
                     {tag.questions.length}+
                   </span>{" "}
                   Questions
-                </p>
-
-                <p className="small-medium text-dark400_light500 mt-3.5">
-                  <span className="body-semibold primary-text-gradient mr-2.5">
-                    {tag.followers.length}+
-                  </span>{" "}
-                  Followers
                 </p>
               </article>
             </Link>
