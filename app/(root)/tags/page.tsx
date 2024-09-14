@@ -1,5 +1,6 @@
 import { Filters } from "@/components/shared/Filters";
 import NoResult from "@/components/shared/NoResult";
+import PaginationComponent from "@/components/shared/PaginationComponent";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Badge } from "@/components/ui/badge";
 import { TagFilters } from "@/constants/filters";
@@ -11,10 +12,11 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
   const result = await getAllTags({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
+    page: Number(searchParams.page),
   });
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <h1 className="h1-bold text-dark100_light900">All Tags</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
@@ -63,7 +65,13 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
           buttonTitle="Ask a question"
         />
       )}
-    </>
+
+      {result?.tags?.length && (
+        <div className="mt-auto">
+          <PaginationComponent noOfCards={result?.totalTags} pageSize={20} />
+        </div>
+      )}
+    </div>
   );
 };
 

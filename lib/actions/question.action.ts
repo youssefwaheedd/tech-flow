@@ -87,11 +87,15 @@ export async function getQuestions(params: GetQuestionsParams) {
       sortOptions = { views: -1 };
     }
 
+    const totalNumberOfQuestions = await Question.countDocuments(query);
+
     const questions: any = await Question.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
-      .sort(sortOptions);
-    return { questions };
+      .sort(sortOptions)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+    return { questions, totalNumberOfQuestions };
   } catch (error) {
     console.error(error);
   }
@@ -250,7 +254,11 @@ export async function getUserSavedQuestions(params: GetSavedQuestionsParams) {
           model: "Tag",
         },
       ],
-      options: { sort: sortOptions },
+      options: {
+        sort: sortOptions,
+        skip: (page - 1) * pageSize,
+        limit: pageSize,
+      },
     });
 
     // Check if user was found

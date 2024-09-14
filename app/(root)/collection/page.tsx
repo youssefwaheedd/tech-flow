@@ -7,6 +7,7 @@ import { QuestionFilters } from "../../../constants/filters";
 import { auth } from "@clerk/nextjs/server";
 import { getUserSavedQuestions } from "../../../lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
+import PaginationComponent from "@/components/shared/PaginationComponent";
 
 const page = async ({ searchParams }: SearchParamsProps) => {
   const { userId: clerkID } = auth();
@@ -16,11 +17,12 @@ const page = async ({ searchParams }: SearchParamsProps) => {
       clerkID,
       searchQuery: searchParams.q,
       filter: searchParams.filter,
+      page: Number(searchParams.page),
     });
   }
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <h1 className="text-dark300_light900 h1-bold self-start">
         Saved Questions
       </h1>
@@ -63,7 +65,12 @@ const page = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </div>
-    </>
+      {result?.length > 0 && (
+        <div className="mt-auto">
+          <PaginationComponent noOfCards={result?.length} pageSize={10} />
+        </div>
+      )}
+    </div>
   );
 };
 

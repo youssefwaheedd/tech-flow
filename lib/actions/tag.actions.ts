@@ -26,6 +26,8 @@ export async function getAllTags(params: GetAllTagsParams) {
   try {
     await connectToDatabase();
     const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    // Ensure page and pageSize are valid integers, defaulting to 1 and 30 respectively
+
     const query: FilterQuery<typeof Tag> = {};
     if (searchQuery) {
       query.$or = [{ name: { $regex: searchQuery, $options: "i" } }];
@@ -45,21 +47,18 @@ export async function getAllTags(params: GetAllTagsParams) {
     }
 
     // Use aggregation to sort by the length of the questions array
-    const tags = await Tag.aggregate([
-      { $match: query },
-      {
-        $addFields: {
-          questionsCount: { $size: "$questions" },
-        },
-      },
-      {
-        $sort: sortOptions,
-      },
-    ]);
+    const tags = await Tag.find(query)
+      .sort(sortOptions)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
 
-    return { tags };
+    // Optionally count total tags for pagination purposes
+    const totalTags = await Tag.countDocuments(query);
+
+    return { tags, totalTags };
   } catch (error) {
     console.error(error);
+    throw new Error("Error fetching tags");
   }
 }
 
@@ -74,7 +73,11 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     const tag = await Tag.findById(tagId).populate({
       path: "questions",
       model: "Question",
-      options: { sort: { createdAt: -1 } },
+      options: {
+        sort: { createdAt: -1 },
+        skip: (page - 1) * pageSize,
+        limit: pageSize,
+      },
       match: query,
       populate: [
         { path: "author", model: "User" },

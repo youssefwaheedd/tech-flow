@@ -224,27 +224,28 @@ const Question = ({ mongoUserId, formType, question }: Props) => {
               <FormMessage className="text-red-500" />
               <FormControl className="mt-3.5">
                 <div className="flex flex-col">
-                  <div className="flex gap-1">
-                    <Input
-                      ref={inputRef}
-                      disabled={type === "edit"}
-                      placeholder="Add tags..."
-                      className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-                      onKeyDown={(e) => handleKeyDown(e, field)}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        if (inputRef.current) {
-                          handleAddTag(inputRef.current.value, field);
-                          inputRef.current.value = ""; // Clear the input after adding the tag
-                        }
-                      }}
-                      className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-                    >
-                      Add
-                    </Button>
-                  </div>
+                  {type === "create" && (
+                    <div className="flex gap-1">
+                      <Input
+                        ref={inputRef}
+                        placeholder="Add tags..."
+                        className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                        onKeyDown={(e) => handleKeyDown(e, field)}
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          if (inputRef.current) {
+                            handleAddTag(inputRef.current.value, field);
+                            inputRef.current.value = ""; // Clear the input after adding the tag
+                          }
+                        }}
+                        className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  )}
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 flex-wrap gap-2.5">
                       {field.value.map((tag) => (
@@ -273,10 +274,12 @@ const Question = ({ mongoUserId, formType, question }: Props) => {
                   )}
                 </div>
               </FormControl>
-              <FormDescription className="body-regular text-light-500 mt-2.5">
-                Add up to 3 tags to describe what your question is about. You
-                can just press Enter to add a tag.
-              </FormDescription>
+              {type === "create" && (
+                <FormDescription className="body-regular text-light-500 mt-2.5">
+                  Add up to 3 tags to describe what your question is about. You
+                  can just press Enter to add a tag.
+                </FormDescription>
+              )}
             </FormItem>
           )}
         />

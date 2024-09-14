@@ -9,11 +9,13 @@ import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Filters } from "@/components/shared/Filters";
 import { UserFilters } from "@/constants/filters";
 import { SearchParamsProps } from "@/types";
+import PaginationComponent from "@/components/shared/PaginationComponent";
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const result = await getUsers({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
+    page: Number(searchParams.page),
   });
   const plainUsers = result?.users.map((user) => ({
     _id: user._id.toString(), // Convert _id if needed
@@ -25,8 +27,10 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
     // Add other necessary fields
   }));
 
+  const totalNumberOfUsers = result?.totalNumberOfUsers || 0;
+
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <h1 className="text-dark300_light900 h1-bold self-start">All Users</h1>
       <div className="max-xs:flex-col mt-11 flex items-center justify-between gap-5 max-md:flex-row">
         <LocalSearch
@@ -66,7 +70,12 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
           )}
         </div>
       )}
-    </>
+      {totalNumberOfUsers > 0 && (
+        <div className="mt-auto">
+          <PaginationComponent noOfCards={totalNumberOfUsers} pageSize={20} />
+        </div>
+      )}
+    </div>
   );
 };
 

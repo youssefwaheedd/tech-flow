@@ -1,6 +1,7 @@
 import { getUserAnswers } from "@/lib/actions/user.actions";
 import { SearchParamsProps } from "@/types";
 import AnswerCard from "../cards/AnswerCard";
+import PaginationComponent from "../shared/PaginationComponent";
 
 interface Props extends SearchParamsProps {
   userId: string;
@@ -8,7 +9,12 @@ interface Props extends SearchParamsProps {
 }
 
 const AnswerTab = async ({ searchParams, userId, clerkID }: Props) => {
-  const result = await getUserAnswers({ userId, page: 1 });
+  const result = await getUserAnswers({
+    userId,
+    page: Number(searchParams.page),
+  });
+
+  const totalNumberOfAnswers = result?.totalNumberOfAnswers || 0;
 
   return (
     <>
@@ -23,6 +29,13 @@ const AnswerTab = async ({ searchParams, userId, clerkID }: Props) => {
           upvotes={answer.upvotes}
         />
       ))}
+
+      <div className="mt-5 w-full">
+        <PaginationComponent
+          pageSize={3}
+          noOfCards={Number(totalNumberOfAnswers)}
+        />
+      </div>
     </>
   );
 };

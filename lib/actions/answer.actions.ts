@@ -41,7 +41,7 @@ export async function getAnswers(params: GetAnswersParams) {
   try {
     // Ensure the database connection is established before querying
     await connectToDatabase(); // Assuming this function is async
-    const { questionId, sortBy, page, pageSize } = params;
+    const { questionId, sortBy, page = 1, pageSize = 3 } = params;
     let sortOptions = {};
     if (sortBy === "recent") {
       sortOptions = { createdAt: -1 };
@@ -56,7 +56,9 @@ export async function getAnswers(params: GetAnswersParams) {
     // Fetch answers from the database with populated author details
     const answers = await Answer.find({ question: questionId })
       .populate("author", "_id clerkID name avatar")
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
 
     // Return the fetched answers
     return { answers };

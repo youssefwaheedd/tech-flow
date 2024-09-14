@@ -5,6 +5,7 @@ import Link from "next/link";
 import React from "react";
 import ParseHTML from "./ParseHTML";
 import Votes from "./Votes";
+import PaginationComponent from "./PaginationComponent";
 // import { useSearchParams } from "next/navigation";
 
 interface Props {
@@ -93,6 +94,9 @@ const AllAnswers = async ({
             <ParseHTML data={answer.content} />
           </article>
         ))}
+      </div>
+      <div className="mt-10">
+        <PaginationComponent noOfCards={totalAnswers} pageSize={3} />
       </div>
     </div>
   );

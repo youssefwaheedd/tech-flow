@@ -11,15 +11,19 @@ import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import { getQuestions } from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
+import PaginationComponent from "@/components/shared/PaginationComponent";
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
   const result: any = await getQuestions({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
+    page: Number(searchParams.page),
   });
 
+  const totalNumberOfQuestions = result.totalNumberOfQuestions;
+
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <div className="flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center">
         <h1 className="text-dark300_light900 h1-bold self-start">
           All Questions
@@ -71,7 +75,15 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </div>
-    </>
+      {result?.questions?.length > 0 && (
+        <div className="mt-auto">
+          <PaginationComponent
+            noOfCards={totalNumberOfQuestions}
+            pageSize={10}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 

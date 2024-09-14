@@ -63,8 +63,12 @@ export const getUsers = async (params: GetAllUsersParams) => {
 
   try {
     await connectToDatabase();
-    const users = await User.find(query).sort(sortOptions);
-    return { users };
+    const totalNumberOfUsers = await User.countDocuments(query);
+    const users = await User.find(query)
+      .sort(sortOptions)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+    return { users, totalNumberOfUsers };
   } catch (error) {
     console.error(error);
   }
@@ -137,15 +141,21 @@ export const deleteUser = async (params: DeleteUserParams) => {
 export const getUserQuestions = async (params: GetUserStatsParams) => {
   try {
     await connectToDatabase();
-    const { userId, page = 1, pageSize = 10 } = params;
-    const userQuestions = await Question.find({ author: params.userId })
+    const { userId, page = 1, pageSize = 3 } = params;
+    const userQuestions = await Question.find({ author: userId })
       .sort({
         views: -1,
         upvotes: -1,
       })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
       .populate("tags", "_id name")
       .populate("author", "_id name avatar clerkID");
-    return { questions: userQuestions };
+
+    const totalNumberOfQuestions = await Question.countDocuments({
+      author: userId,
+    });
+    return { questions: userQuestions, totalNumberOfQuestions };
   } catch (error) {
     console.error(error);
   }
@@ -154,14 +164,20 @@ export const getUserQuestions = async (params: GetUserStatsParams) => {
 export const getUserAnswers = async (params: GetUserStatsParams) => {
   try {
     await connectToDatabase();
-    const { userId, page = 1, pageSize = 10 } = params;
+    const { userId, page = 1, pageSize = 3 } = params;
     const userAnswers = await Answer.find({ author: userId })
       .sort({
         upvotes: -1,
       })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
       .populate("question", "_id title")
       .populate("author", "_id name avatar clerkID");
-    return { answers: userAnswers };
+
+    const totalNumberOfAnswers = await Answer.countDocuments({
+      author: userId,
+    });
+    return { answers: userAnswers, totalNumberOfAnswers };
   } catch (error) {
     console.error(error);
   }

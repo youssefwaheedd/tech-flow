@@ -2,6 +2,7 @@
 import QuestionCard from "@/components/cards/QuestionCard";
 import { Filters } from "@/components/shared/Filters";
 import NoResult from "@/components/shared/NoResult";
+import PaginationComponent from "@/components/shared/PaginationComponent";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { QuestionFilters, TagFilters } from "@/constants/filters";
 import { getQuestionsByTagId } from "@/lib/actions/tag.actions";
@@ -15,7 +16,7 @@ import React from "react";
 const Page = async ({ params, searchParams }: URLProps) => {
   const tag = await getQuestionsByTagId({
     tagId: params.id,
-    page: 1,
+    page: Number(searchParams.page),
     searchQuery: searchParams.q,
   });
   const { createdAtValue, dateFormat } = getTimeStamp(tag.createdOn);
@@ -25,7 +26,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
     mongoUser = await getUserById({ userId: clerkID });
   }
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <h1 className="text-dark300_light900 h1-bold self-start capitalize">
         {tag.name} Questions
       </h1>
@@ -69,7 +70,15 @@ const Page = async ({ params, searchParams }: URLProps) => {
           />
         )}
       </div>
-    </>
+      {tag?.questions?.length > 0 && (
+        <div className="mt-auto">
+          <PaginationComponent
+            noOfCards={tag?.questions?.length}
+            pageSize={10}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 
