@@ -9,29 +9,14 @@ import Link from "next/link";
 import { title } from "process";
 import Image from "next/image";
 import GlobalFilters from "./GlobalFilters";
+import { globalSearch } from "@/lib/actions/general.action";
 
 const GlobalResult = () => {
   const searchParams = useSearchParams();
 
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const [result, setResult] = React.useState([
-    {
-      type: "question",
-      id: 1,
-      title: "What is the best way to learn programming?",
-    },
-    {
-      type: "user",
-      id: 1,
-      title: "Youssef Waheed",
-    },
-    {
-      type: "tag",
-      id: 1,
-      title: "Next.Js",
-    },
-  ]);
+  const [result, setResult] = React.useState([]);
 
   const global = searchParams.get("global");
   const type = searchParams.get("type");
@@ -41,22 +26,42 @@ const GlobalResult = () => {
       setResult([]);
       setIsLoading(true);
       try {
-        // TODO: get result
+        const result = await globalSearch({
+          query: global,
+          type,
+        });
+
+        setResult(JSON.parse(result));
       } catch (err: any) {
         throw new Error(err);
       } finally {
         setIsLoading(false);
       }
     };
+
+    if (global) {
+      fetchResult();
+    }
   }, [global, type]);
 
-  const renderLink = (type: string, item: any) => {
-    return "/";
+  const renderLink = (type: string, id: string) => {
+    switch (type) {
+      case "question":
+        return `/question/${id}`;
+      case "user":
+        return `/profile/${id}`;
+      case "tag":
+        return `/tags/${id}`;
+      case "answer":
+        return `/question/${id}`;
+      default:
+        return "/";
+    }
   };
 
   return (
     <div className="bg-light-800 dark:bg-dark-400 absolute top-full z-10 mt-3 w-full rounded-xl py-5 shadow-sm ">
-      <p className="text-dark400_light900 paragraph-semibold px-5">
+      <p className="text-dark400_light900 sm:paragraph-semibold px-5 text-xs">
         <GlobalFilters />
       </p>
       <div className="bg-light-700/50 dark:bg-dark-500/50 my-5 h-px" />
@@ -75,7 +80,7 @@ const GlobalResult = () => {
               result?.map((item: any, index: number) => (
                 <Link
                   key={item.type + item.id + index}
-                  href={renderLink("type", "id")}
+                  href={renderLink(item.type, item.id)}
                   className="hover:bg-light-700/50 dark:hover:bg-dark-500/50 flex w-full cursor-pointer items-start gap-3 px-5 py-2.5"
                 >
                   <Image

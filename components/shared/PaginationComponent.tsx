@@ -17,9 +17,14 @@ import { formUrlQuery } from "@/lib/utils";
 interface Props {
   noOfCards: number;
   pageSize: number;
+  setInitialPage?: boolean;
 }
 
-const PaginationComponent = ({ noOfCards, pageSize }: Props) => {
+const PaginationComponent = ({
+  noOfCards,
+  pageSize,
+  setInitialPage,
+}: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -27,7 +32,9 @@ const PaginationComponent = ({ noOfCards, pageSize }: Props) => {
 
   // Track if the component is mounted
   const [isMounted, setIsMounted] = useState(false);
-  const [page, setPage] = useState<number>(() => Number(pageQuery) || 1);
+  const [page, setPage] = useState<number>(() =>
+    setInitialPage ? 1 : Number(pageQuery) || 1
+  );
 
   useEffect(() => {
     setIsMounted(true); // Component has mounted on client side

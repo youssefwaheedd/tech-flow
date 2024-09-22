@@ -23,14 +23,21 @@ export async function createAnswer(params: CreateAnswerParams) {
       author: authorId,
       question: questionId,
     });
-    await Question.findByIdAndUpdate(questionId, {
+    const questionObject = await Question.findByIdAndUpdate(questionId, {
       $push: { answers: newAnswer._id },
     });
     await User.findByIdAndUpdate(authorId, {
       $push: { answers: newAnswer._id },
+      $inc: { reputation: 10 },
     });
 
-    // TODO : Add interaction
+    await Interaction.create({
+      user: authorId,
+      action: "answer",
+      questionId,
+      answer: newAnswer._id,
+      tags: questionObject.tags,
+    });
     revalidatePath(path);
   } catch (error) {
     console.error(error);
@@ -89,11 +96,15 @@ export async function voteAnswer(params: AnswerVoteParams) {
     // Handle downvote
     if (hasdownVoted) {
       if (alreadyDownvoted) {
+        await User.findByIdAndUpdate(answer.author, {
+          $inc: { reputation: 10 },
+        });
         await Answer.findByIdAndUpdate(answerId, {
           $pull: { downvotes: userId },
         });
         await User.findByIdAndUpdate(userId, {
           $pull: { downvotes: answerId },
+          $inc: { reputation: 2 },
         });
         return; // Exit if already downvoted
       }
@@ -104,19 +115,27 @@ export async function voteAnswer(params: AnswerVoteParams) {
         $push: { downvotes: userId },
       });
 
+      await User.findByIdAndUpdate(answer.author, {
+        $inc: { reputation: -10 },
+      });
       // Update user votes
       await User.findByIdAndUpdate(userId, {
         $pull: { upvotes: answerId },
         $push: { downvotes: answerId },
+        $inc: { reputation: -2 },
       });
     } else {
       // Handle upvote
       if (alreadyUpvoted) {
+        await User.findByIdAndUpdate(answer.author, {
+          $inc: { reputation: -10 },
+        });
         await Answer.findByIdAndUpdate(answerId, {
           $pull: { upvotes: userId },
         });
         await User.findByIdAndUpdate(userId, {
           $pull: { upvotes: answerId },
+          $inc: { reputation: -2 },
         });
         return; // Exit if already upvoted
       }
@@ -127,10 +146,14 @@ export async function voteAnswer(params: AnswerVoteParams) {
         $pull: { downvotes: userId },
       });
 
+      await User.findByIdAndUpdate(answer.author, {
+        $inc: { reputation: 10 },
+      });
       // Update user votes
       await User.findByIdAndUpdate(userId, {
         $push: { upvotes: answerId },
         $pull: { downvotes: answerId },
+        $inc: { reputation: 2 },
       });
     }
     // increment author's reputation by +10 for upvote and -5 for downvote

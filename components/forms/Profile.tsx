@@ -33,8 +33,6 @@ const Profile = ({ clerkId, user }: Props) => {
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      name: parsedUser.name || "",
-      username: parsedUser.username || "",
       portfolioWebsite: parsedUser.portfolioWebsite || "",
       location: parsedUser.location || "",
       bio: parsedUser.bio || "",
@@ -48,8 +46,6 @@ const Profile = ({ clerkId, user }: Props) => {
       await updateUser({
         clerkID: clerkId,
         updateData: {
-          name: values.name,
-          username: values.username,
           portfolioWebsite: values.portfolioWebsite,
           location: values.location,
           bio: values.bio,
@@ -71,44 +67,6 @@ const Profile = ({ clerkId, user }: Props) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="mt-9 flex w-full flex-col gap-9"
       >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="space-y-3.5">
-              <FormLabel className="text-dark300_light700">
-                Name <span className="text-primary-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Your name"
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem className="space-y-3.5">
-              <FormLabel className="text-dark300_light700">
-                Username <span className="text-primary-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Your username"
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="bio"

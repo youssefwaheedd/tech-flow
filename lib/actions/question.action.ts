@@ -51,10 +51,19 @@ export async function createQuestion(params: CreateQuestionParams) {
       $push: { questions: question },
     });
 
-    revalidatePath(path);
     // create an interaction record for the user ask-question action
-
+    await Interaction.create({
+      user: author,
+      action: "ask-question",
+      question: question._id,
+      tags: tagDocuments,
+    });
     // Increment author's reputation by +5 for creating a question
+    await User.findByIdAndUpdate(author, {
+      $inc: { reputation: 5 },
+    });
+
+    revalidatePath(path);
   } catch (error) {
     console.error(error);
   }
@@ -137,6 +146,9 @@ export async function voteQuestion(params: QuestionVoteParams) {
     // Handle downvote
     if (hasdownVoted) {
       if (alreadyDownvoted) {
+        await User.findByIdAndUpdate(question.author, {
+          $inc: { reputation: 10 },
+        });
         await Question.findByIdAndUpdate(questionId, {
           $pull: { downvotes: userId },
         });
@@ -152,14 +164,22 @@ export async function voteQuestion(params: QuestionVoteParams) {
         $push: { downvotes: userId },
       });
 
+      await User.findByIdAndUpdate(question.author, {
+        $inc: { reputation: -10 },
+      });
+
       // Update user votes
       await User.findByIdAndUpdate(userId, {
         $pull: { upvotes: questionId },
         $push: { downvotes: questionId },
+        $inc: { reputation: -1 },
       });
     } else {
       // Handle upvote
       if (alreadyUpvoted) {
+        await User.findByIdAndUpdate(question.author, {
+          $inc: { reputation: -10 },
+        });
         await Question.findByIdAndUpdate(questionId, {
           $pull: { upvotes: userId },
         });
@@ -175,10 +195,15 @@ export async function voteQuestion(params: QuestionVoteParams) {
         $pull: { downvotes: userId },
       });
 
+      await User.findByIdAndUpdate(question.author, {
+        $inc: { reputation: 10 },
+      });
+
       // Update user votes
       await User.findByIdAndUpdate(userId, {
         $push: { upvotes: questionId },
         $pull: { downvotes: questionId },
+        $inc: { reputation: 1 },
       });
     }
     // increment author's reputation by +10 for upvote and -5 for downvote

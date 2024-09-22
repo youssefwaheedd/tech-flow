@@ -20,8 +20,6 @@ export const EditAnswerSchema = z.object({
 });
 
 export const ProfileSchema = z.object({
-  name: z.string().min(5).max(50),
-  username: z.string().min(5).max(50),
   bio: z.string().max(150).optional(),
   portfolioWebsite: z.string().url().or(z.literal("")).optional(), // Allows URL or empty string
   location: z.string().max(50).optional(),

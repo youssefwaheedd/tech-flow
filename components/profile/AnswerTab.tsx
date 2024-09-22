@@ -32,6 +32,7 @@ const AnswerTab = async ({ searchParams, userId, clerkID }: Props) => {
 
       <div className="mt-5 w-full">
         <PaginationComponent
+          setInitialPage={true}
           pageSize={3}
           noOfCards={Number(totalNumberOfAnswers)}
         />

@@ -35,6 +35,7 @@ const QuestionTab = async ({ searchParams, userId, clerkID }: Props) => {
       ))}
       <div className="mt-10">
         <PaginationComponent
+          setInitialPage={true}
           pageSize={3}
           noOfCards={Number(totalNumberOfUserQuestions)}
         />

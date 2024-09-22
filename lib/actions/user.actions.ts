@@ -144,6 +144,7 @@ export const getUserQuestions = async (params: GetUserStatsParams) => {
     const { userId, page = 1, pageSize = 3 } = params;
     const userQuestions = await Question.find({ author: userId })
       .sort({
+        createdAt: -1,
         views: -1,
         upvotes: -1,
       })
@@ -168,6 +169,7 @@ export const getUserAnswers = async (params: GetUserStatsParams) => {
     const userAnswers = await Answer.find({ author: userId })
       .sort({
         upvotes: -1,
+        createdAt: -1,
       })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
