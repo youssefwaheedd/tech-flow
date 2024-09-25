@@ -65,7 +65,7 @@ const page = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </div>
-      {result?.length > 0 && (
+      {result?.length > 10 && (
         <div className="mt-auto">
           <PaginationComponent noOfCards={result?.length} pageSize={10} />
         </div>

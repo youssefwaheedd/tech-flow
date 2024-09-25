@@ -95,9 +95,11 @@ const AllAnswers = async ({
           </article>
         ))}
       </div>
-      <div className="mt-10">
-        <PaginationComponent noOfCards={totalAnswers} pageSize={3} />
-      </div>
+      {totalAnswers > 3 && (
+        <div className="mt-10">
+          <PaginationComponent noOfCards={totalAnswers} pageSize={3} />
+        </div>
+      )}
     </div>
   );
 };

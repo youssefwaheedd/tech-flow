@@ -33,13 +33,15 @@ const QuestionTab = async ({ searchParams, userId, clerkID }: Props) => {
           tags={question.tags.map((tag: []) => tag)}
         />
       ))}
-      <div className="mt-10">
-        <PaginationComponent
-          setInitialPage={true}
-          pageSize={3}
-          noOfCards={Number(totalNumberOfUserQuestions)}
-        />
-      </div>
+      {(totalNumberOfUserQuestions ?? 0) > 3 && (
+        <div className="mt-10">
+          <PaginationComponent
+            setInitialPage={true}
+            pageSize={3}
+            noOfCards={Number(totalNumberOfUserQuestions)}
+          />
+        </div>
+      )}
     </>
   );
 };
