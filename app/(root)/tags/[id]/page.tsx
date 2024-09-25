@@ -23,7 +23,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkID } = auth();
   let mongoUser;
   if (clerkID) {
-    mongoUser = await getUserById({ userId: clerkID });
+    const { user }: any = await getUserById({ userId: clerkID });
+    mongoUser = user;
   }
   return (
     <div className="flex min-h-screen flex-col">

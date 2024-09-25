@@ -8,7 +8,7 @@ const Page = async ({ params }: ParamsProps) => {
 
   if (!userId) return null;
 
-  const mongoUser = await getUserById({ userId });
+  const { user: mongoUser }: any = await getUserById({ userId });
 
   return (
     <>

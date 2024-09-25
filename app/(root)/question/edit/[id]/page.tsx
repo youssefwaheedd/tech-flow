@@ -9,7 +9,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
   const { userId } = auth();
   if (!userId) redirect("/sign-in");
 
-  const mongoUser = await getUserById({ userId });
+  const { user: mongoUser }: any = await getUserById({ userId });
   const question = await getQuestionById({ questionId: params.id });
   return (
     <div>
