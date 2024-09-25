@@ -9,16 +9,13 @@ const Page = async () => {
 
   if (!userId) redirect("/sign-in");
 
-  const mongoUser = await getUserById({ userId });
+  const { user }: any = await getUserById({ userId });
 
   return (
     <div>
       <h1 className="h1-bold text-dark100_light900">Ask a Question</h1>
       <div className="mt-9">
-        <Question
-          formType="create"
-          mongoUserId={JSON.stringify(mongoUser._id)}
-        />
+        <Question formType="create" mongoUserId={JSON.stringify(user?._id)} />
       </div>
     </div>
   );

@@ -42,14 +42,16 @@ const popularTags = [
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId } = auth();
-  const mongoUser = await getUserById({ userId: params.id });
-  const userQuestions = mongoUser.questions;
-  const { createdAtValue, dateFormat } = getTimeStamp(mongoUser.joinedAt);
+  const { user, badgeCounts: badges }: any = await getUserById({
+    userId: params.id,
+  });
+  const userQuestions = user.questions;
+  const { createdAtValue, dateFormat } = getTimeStamp(user.joinedAt);
   return (
     <>
       <div className="flex w-full flex-col items-start justify-start gap-3 sm:flex-row sm:flex-wrap">
         <Image
-          src={mongoUser?.avatar}
+          src={user?.avatar}
           alt="user"
           width={140}
           height={140}
@@ -57,29 +59,27 @@ const Page = async ({ params, searchParams }: URLProps) => {
         />
         <div className="flex w-full flex-col-reverse justify-between sm:flex-row">
           <div className="text-dark500_light700 flex flex-col items-start justify-start">
-            <h2 className="h2-bold">{mongoUser?.name}</h2>
-            <p className="text-dark-200_light800 text-sm">
-              @{mongoUser?.username}
-            </p>
-            {mongoUser.bio && (
-              <p className="text-dark300_light900 mt-3">{mongoUser?.bio}</p>
+            <h2 className="h2-bold">{user?.name}</h2>
+            <p className="text-dark-200_light800 text-sm">@{user?.username}</p>
+            {user.bio && (
+              <p className="text-dark300_light900 mt-3">{user?.bio}</p>
             )}
             <div className="mt-5 flex flex-wrap gap-6">
-              {mongoUser.portfolioWebsite && (
+              {user.portfolioWebsite && (
                 <Metric
                   imgUrl="/assets/icons/link.svg"
                   alt="portfolio"
                   value="Portfolio"
-                  href={mongoUser?.portfolioWebsite}
+                  href={user?.portfolioWebsite}
                   textStyles="text-blue-600"
                 />
               )}
 
-              {mongoUser.location && (
+              {user.location && (
                 <Metric
                   imgUrl="/assets/icons/location.svg"
                   alt="location"
-                  value={mongoUser?.location}
+                  value={user?.location}
                 />
               )}
 
@@ -93,7 +93,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
           </div>
           <div className="mt-1 flex self-end justify-self-end max-sm:mb-5 max-sm:w-full sm:mt-3 sm:justify-end">
             <SignedIn>
-              {userId === mongoUser?.clerkID && (
+              {userId === user?.clerkID && (
                 <Link href="/profile/edit" passHref>
                   <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4">
                     Edit Profile
@@ -104,19 +104,20 @@ const Page = async ({ params, searchParams }: URLProps) => {
           </div>
         </div>
       </div>
-      <h2 className="text-dark300_light900 h2-bold mb-3 mt-7">Stats</h2>
+      <h2 className="text-dark300_light900 h2-bold mb-3 mt-7">
+        Stats - {user?.reputation}
+      </h2>
       <div className="mt-5 grid w-full grid-cols-2 gap-3 md:grid-cols-4">
         <section className="background-light900_dark200  flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row sm:flex-wrap">
           <p className="text-dark300_light900 text-xs sm:text-sm">
-            {mongoUser?.questions?.length}{" "}
-            {mongoUser?.questions?.length > 1 ||
-            mongoUser?.questions?.length === 0
+            {user?.questions?.length}{" "}
+            {user?.questions?.length > 1 || user?.questions?.length === 0
               ? "Questions"
               : "Question"}
           </p>
           <p className="text-dark300_light900 text-xs sm:text-sm">
-            {mongoUser?.answers?.length}{" "}
-            {mongoUser?.answers?.length > 1 || mongoUser?.answers?.length === 0
+            {user?.answers?.length}{" "}
+            {user?.answers?.length > 1 || user?.answers?.length === 0
               ? "Answers"
               : "Answer"}
           </p>
@@ -129,7 +130,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
             height={50}
           />
           <div className="text-dark300_light900 flex gap-3 text-xs sm:flex-col sm:gap-0 sm:text-sm">
-            <p>0</p> <p>Gold Badges</p>
+            <p>{badges.GOLD}</p> <p>Gold Badges</p>
           </div>
         </section>
         <section className="background-light900_dark200  flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
@@ -140,7 +141,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
             height={50}
           />
           <div className="text-dark300_light900 flex gap-3 text-xs sm:flex-col sm:gap-0 sm:text-sm">
-            <p>0</p> <p>Silver Badges</p>
+            <p>{badges.SILVER}</p> <p>Silver Badges</p>
           </div>
         </section>
         <section className="background-light900_dark200  flex flex-col items-center justify-center gap-4 rounded-lg px-8 py-5 sm:flex-row">
@@ -151,7 +152,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
             height={50}
           />
           <div className="text-dark300_light900 flex gap-3 text-xs sm:flex-col sm:gap-0 sm:text-sm">
-            <p>0</p>
+            <p>{badges.BRONZE}</p>
             <p>Bronze Badges</p>
           </div>
         </section>
@@ -177,12 +178,12 @@ const Page = async ({ params, searchParams }: URLProps) => {
             {userQuestions.length > 0 ? (
               <QuestionTab
                 searchParams={searchParams}
-                userId={mongoUser._id}
+                userId={user._id}
                 clerkID={userId}
               />
             ) : (
               {
-                ...(userId === mongoUser.clerkID ? (
+                ...(userId === user.clerkID ? (
                   <NoResult
                     description="You haven't posted any questions yet."
                     title="No posts yet"
@@ -202,15 +203,15 @@ const Page = async ({ params, searchParams }: URLProps) => {
             value="Answers"
             className="flex w-full flex-col items-center justify-center gap-6"
           >
-            {mongoUser.answers.length > 0 ? (
+            {user.answers.length > 0 ? (
               <AnswerTab
                 searchParams={searchParams}
-                userId={mongoUser._id}
-                clerkID={JSON.stringify(mongoUser.clerkID)}
+                userId={user._id}
+                clerkID={JSON.stringify(user.clerkID)}
               />
             ) : (
               {
-                ...(userId === mongoUser.clerkID ? (
+                ...(userId === user.clerkID ? (
                   <NoResult
                     description="You haven't answered any questions yet."
                     title="No answers yet"

@@ -16,6 +16,8 @@ import Tag from "../models/tag.model";
 import Answer from "../models/answer.model";
 import Interaction from "../models/interaction.model";
 import { FilterQuery } from "mongoose";
+import { BadgeCriteriaType } from "@/types";
+import { assignBadges } from "../utils";
 
 export const createUser = async (params: CreateUserParams) => {
   try {
@@ -95,7 +97,63 @@ export const getUserById = async (params: GetUserByIdParams) => {
         model: "Answer",
         populate: [{ path: "author", model: "User" }],
       });
-    return user;
+
+    const [questionUpvotes] = await Question.aggregate([
+      { $match: { author: user?._id } },
+      { $project: { _id: 0, upvotes: { $size: "$upvotes" } } },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
+    ]);
+    const [answerUpvotes] = await Answer.aggregate([
+      { $match: { author: user?._id } },
+      { $project: { _id: 0, upvotes: { $size: "$upvotes" } } },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
+    ]);
+    const [questionViews] = await Question.aggregate([
+      { $match: { author: user?._id } },
+      {
+        $group: {
+          _id: null,
+          totalViews: { $sum: "$views" },
+        },
+      },
+    ]);
+
+    const criteria = [
+      {
+        type: "QUESTION_COUNT" as BadgeCriteriaType,
+        count: user?.questions.length || 0,
+      },
+      {
+        type: "ANSWER_COUNT" as BadgeCriteriaType,
+        count: user?.answers.length || 0,
+      },
+      {
+        type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+        count: questionUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+        count: answerUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "TOTAL_VIEWS" as BadgeCriteriaType,
+        count: questionViews?.totalViews || 0,
+      },
+    ];
+
+    const badgeCounts = assignBadges({ criteria });
+
+    return { user, badgeCounts };
   } catch (error) {
     console.error(error);
   }
