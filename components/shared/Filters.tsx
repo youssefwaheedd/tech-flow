@@ -35,7 +35,6 @@ export const Filters: React.FC<Props> = ({
 
   const handleActiveFilter = (filter: string, name: string) => {
     setCurrentFilter(name);
-    console.log(filter);
     const isActive = active === filter; // Check if the filter is active
     const updatedFilter = isActive ? "" : filter; // Toggle the filter: if active, remove it, otherwise set it
 
