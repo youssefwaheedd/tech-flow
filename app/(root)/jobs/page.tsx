@@ -54,7 +54,7 @@ const Page = async ({ searchParams }: Props) => {
         )}
       </section>
 
-      {jobs.length > 0 && (
+      {jobs.length > 10 && (
         <PaginationComponent pageSize={10} noOfCards={jobs.length} />
       )}
     </>
