@@ -30,7 +30,7 @@ export const metadata: Metadata = {
       "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world.",
     images: [
       {
-        url: "https://yourdomain.com/path-to-your-image.jpg",
+        url: "https://wallpaperaccess.com/full/4416207.png",
         alt: "TechFlow Banner",
       },
     ],
