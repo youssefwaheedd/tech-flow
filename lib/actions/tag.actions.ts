@@ -30,11 +30,11 @@ export async function getAllTags(params: GetAllTagsParams) {
 
     let sortOptions = {};
     if (filter === "popular") {
-      sortOptions = { questionsCount: -1 };
+      sortOptions = { questions: -1 };
     } else if (filter === "recent") {
-      sortOptions = { createdAt: -1 };
+      sortOptions = { createdOn: -1 };
     } else if (filter === "old") {
-      sortOptions = { createdAt: 1 };
+      sortOptions = { createdOn: 1 };
     } else if (filter === "name") {
       sortOptions = { name: 1 };
     } else {
