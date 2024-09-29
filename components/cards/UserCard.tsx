@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
 import Image from "next/image";
@@ -23,22 +24,22 @@ interface Tag {
 }
 
 const UserCard = ({ user }: Props) => {
-  const [userTopInteractedTags, setUserTopInteractedTags] = useState<Tag[]>([]);
+  // const [userTopInteractedTags, setUserTopInteractedTags] = useState<Tag[]>([]);
 
-  useEffect(() => {
-    // Simulate fetching data
-    const fetchTags = async () => {
-      // Replace this with actual data fetching logic
-      const result: Tag[] | undefined = await getTopInteractedTags({
-        userId: user._id,
-      });
+  // useEffect(() => {
+  //   // Simulate fetching data
+  //   const fetchTags = async () => {
+  //     // Replace this with actual data fetching logic
+  //     const result: Tag[] | undefined = await getTopInteractedTags({
+  //       userId: user._id,
+  //     });
 
-      // Safely set the state, falling back to an empty array if undefined
-      setUserTopInteractedTags(result || []);
-    };
+  //     // Safely set the state, falling back to an empty array if undefined
+  //     // setUserTopInteractedTags(result || []);
+  //   };
 
-    fetchTags();
-  }, []);
+  //   fetchTags();
+  // }, []);
 
   return (
     <Link
@@ -54,7 +55,7 @@ const UserCard = ({ user }: Props) => {
       />
       <p className="h3-bold line-clamp-1">{user.name}</p>
       <p>@{user.username}</p>
-      <div className="flex w-full items-center justify-center gap-3">
+      {/* <div className="flex w-full items-center justify-center gap-3">
         {userTopInteractedTags.length ? (
           userTopInteractedTags.map((tag: any) => (
             <RenderTag
@@ -67,7 +68,7 @@ const UserCard = ({ user }: Props) => {
         ) : (
           <Badge>No tags yet</Badge>
         )}
-      </div>
+      </div> */}
     </Link>
   );
 };

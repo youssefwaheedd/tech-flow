@@ -13,7 +13,9 @@ export async function viewQuestion(params: ViewQuestionParams) {
     await Question.findByIdAndUpdate(questionId, {
       $inc: { views: 1 },
     });
-
+    const question = await Question.findOne({ _id: questionId }).populate(
+      "tags"
+    );
     if (userId) {
       const existingInteraction = await Interaction.findOne({
         user: userId,
@@ -29,6 +31,7 @@ export async function viewQuestion(params: ViewQuestionParams) {
         user: userId,
         question: questionId,
         action: "view",
+        tags: question.tags,
       });
     }
   } catch (error: any) {

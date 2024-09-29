@@ -13,14 +13,9 @@ import {
 } from "./shared.types";
 import path from "path";
 import { revalidatePath } from "next/cache";
-import { FilterQuery, model } from "mongoose";
+import mongoose, { FilterQuery, model } from "mongoose";
 import Question from "../models/question.model";
-
-const tempTags = [
-  { _id: 1, name: "react" },
-  { _id: 2, name: "nextjs" },
-  { _id: 3, name: "javascript" },
-];
+import Interaction from "../models/interaction.model";
 
 export async function getAllTags(params: GetAllTagsParams) {
   try {
@@ -96,17 +91,61 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
-    // await connectToDatabase();
-    // const { limit = 3, userId } = params;
-    // const user = await User.findById(userId);
-    // if (!user) {
-    //   throw new Error("User not found");
-    // Find interactions of the user with the tags
-    // Create a new model for interactions
-    // const tags = await Tag.find({}).sort({ count: -1 }).limit(limit);
-    return tempTags;
+    await connectToDatabase();
+    const { userId, limit = 3 } = params;
+
+    // Check if the user exists
+    const user = await mongoose.models.User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Aggregation to get the top interacted tags
+    const topTags = await Interaction.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $unwind: "$tags", // Unwind the array of tags
+      },
+      {
+        $group: {
+          _id: "$tags", // Group by the tag
+          count: { $sum: 1 }, // Count the occurrences of each tag
+        },
+      },
+      {
+        $sort: { count: -1 }, // Sort by count in descending order
+      },
+      {
+        $limit: limit, // Limit to the top 'n' tags
+      },
+      {
+        $lookup: {
+          from: "tags", // Assuming 'Tag' is the name of the tag collection
+          localField: "_id",
+          foreignField: "_id",
+          as: "tagDetails",
+        },
+      },
+      {
+        $unwind: "$tagDetails", // Unwind the tag details to get full information about the tag
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the internal _id from the result
+          tag: "$tagDetails",
+          count: 1, // Include the count of interactions
+        },
+      },
+    ]);
+
+    return topTags;
   } catch (error) {
-    console.error(error);
+    console.error("Error getting top interacted tags:", error);
+    throw error;
   }
 }
 
