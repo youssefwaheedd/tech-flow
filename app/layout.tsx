@@ -21,9 +21,31 @@ const spaceGrotesk = SpaceGrotesk({
 export const metadata: Metadata = {
   title: "TechFlow",
   description:
-    "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
-  icons: {
-    icon: "/assets/images/site-logo.svg",
+    "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world.",
+  openGraph: {
+    type: "website",
+    url: "https://tech--flow.vercel.app/",
+    title: "TechFlow",
+    description:
+      "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world.",
+    images: [
+      {
+        url: "https://yourdomain.com/path-to-your-image.jpg",
+        alt: "TechFlow Banner",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TechFlow",
+    description:
+      "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world.",
+    images: [
+      {
+        url: "https://yourdomain.com/path-to-your-image.jpg",
+        alt: "TechFlow Banner",
+      },
+    ],
   },
 };
 

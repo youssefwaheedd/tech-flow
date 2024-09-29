@@ -16,7 +16,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import AnswerTab from "@/components/profile/AnswerTab";
 import QuestionTab from "@/components/profile/QuestionTab";
+import type { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Profile | TechFlow",
+};
 const popularTags = [
   {
     _id: 1,

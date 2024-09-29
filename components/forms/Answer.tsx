@@ -21,6 +21,7 @@ import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.actions";
 import { usePathname } from "next/navigation";
 import Swal from "sweetalert2";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   authorId: string;
@@ -51,6 +52,9 @@ const Answer = ({ authorId, questionContent, questionId, disabled }: Props) => {
         const editor = editorRef.current as any;
         editor.setContent("");
       }
+      return toast({
+        title: "Answer added successfully!",
+      });
     } catch (err: any) {
       throw new Error("Error creating answer", err);
     } finally {
@@ -58,16 +62,25 @@ const Answer = ({ authorId, questionContent, questionId, disabled }: Props) => {
     }
   };
 
-  const handleGenerateAIAnswer = async () => {
-    setIsGenerating(true);
-    try {
-      // handle generate answer
-    } catch (error: any) {
-      throw new Error("Error generating AI answer", error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+  // const handleGenerateAIAnswer = async () => {
+  //   setIsGenerating(true);
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+  //       {
+  //         method: "POST",
+  //         body: JSON.stringify({ question: questionContent }),
+  //       }
+  //     );
+
+  //     const reply = await response.json();
+  //     console.log(reply.aiAnswer);
+  //   } catch (error: any) {
+  //     throw new Error("Error generating AI answer", error);
+  //   } finally {
+  //     setIsGenerating(false);
+  //   }
+  // };
 
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
@@ -90,7 +103,7 @@ const Answer = ({ authorId, questionContent, questionId, disabled }: Props) => {
         popup: "bg-blue-500 text-black p-4 rounded-lg shadow-lg", // Custom styling for the popup
         title: "font-bold text-lg", // Title styling
         confirmButton: "bg-primary-500 text-white px-4 py-2 rounded-lg", // Confirm button styling
-        cancelButton: "bg-red-500 text-black px-4 py-2 rounded-lg", // Cancel button styling
+        cancelButton: "bg-black-500 text-white px-4 py-2 rounded-lg", // Cancel button styling
       },
     }).then((result) => {
       if (result.isConfirmed) {
@@ -107,7 +120,7 @@ const Answer = ({ authorId, questionContent, questionId, disabled }: Props) => {
         <h4 className="paragraph-semibold text-dark400_light800">
           Write you answer here
         </h4>
-        <Button
+        {/* <Button
           className="btn light-border-2 text-primary-500 dark:text-primary-500  w-fit gap-1.5 px-4 py-2.5  shadow-none"
           disabled={isGenerating}
           onClick={() => {
@@ -122,7 +135,7 @@ const Answer = ({ authorId, questionContent, questionId, disabled }: Props) => {
             className="object-contain"
           />
           {isGenerating ? "Generating..." : "Generate AI Answer"}
-        </Button>
+        </Button> */}
       </div>
       <Form {...form}>
         <form

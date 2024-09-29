@@ -9,18 +9,40 @@ import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
-import { getQuestions } from "@/lib/actions/question.action";
+import {
+  getQuestions,
+  getRecommendedQuestions,
+} from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
+import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
+
+export const metadata: Metadata = {
+  title: "Home | TechFlow",
+};
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
-  const result: any = await getQuestions({
-    searchQuery: searchParams.q,
-    filter: searchParams.filter,
-    page: Number(searchParams.page),
-  });
+  const { userId } = auth();
+  let result;
 
-  const totalNumberOfQuestions = result.totalNumberOfQuestions;
+  if (searchParams?.filter === "recommended") {
+    if (userId) {
+      result = await getRecommendedQuestions({
+        userId,
+        searchQuery: searchParams.q,
+        page: Number(searchParams.page),
+      });
+    }
+  } else {
+    result = await getQuestions({
+      searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page: Number(searchParams.page),
+    });
+  }
+
+  const totalNumberOfQuestions = Number(result?.totalNumberOfQuestions);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -75,7 +97,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </div>
-      {totalNumberOfQuestions > 10 && (
+      {(totalNumberOfQuestions ?? 0) > 10 && (
         <div className="mt-auto">
           <PaginationComponent
             noOfCards={totalNumberOfQuestions}

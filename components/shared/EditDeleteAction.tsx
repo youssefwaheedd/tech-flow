@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { deleteAnswer } from "@/lib/actions/answer.actions";
 import { usePathname } from "next/navigation";
 import { deleteQuestion } from "@/lib/actions/question.action";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   type: string;
@@ -39,6 +40,10 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
         await deleteAnswer({ answerId: JSON.parse(itemId), path: pathname });
       }
       setDialogOpen(false); // Close the dialog after successful deletion
+      return toast({
+        title: `${type === "Question" ? "Question" : "Answer"} deleted successfully`,
+        variant: "default",
+      });
     } catch (error) {
       console.error("Error deleting post:", error);
     } finally {

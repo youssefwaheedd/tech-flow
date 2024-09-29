@@ -3,7 +3,11 @@ import { auth } from "@clerk/nextjs/server";
 import React from "react";
 import { redirect } from "next/navigation";
 import { getUserById } from "@/lib/actions/user.actions";
+import type { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Ask | TechFlow",
+};
 const Page = async () => {
   const { userId } = auth();
 

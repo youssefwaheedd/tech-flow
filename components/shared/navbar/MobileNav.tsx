@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-custom-classname */
 "use client";
 
 import React from "react";
@@ -76,7 +77,7 @@ const MobileNav = () => {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="background-light900_dark200 flex flex-col"
+        className="background-light900_dark200 border-none"
       >
         <Link href="/" className="flex items-center gap-1">
           <Image

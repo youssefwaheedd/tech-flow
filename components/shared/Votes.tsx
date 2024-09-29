@@ -13,6 +13,7 @@ import { voteAnswer } from "@/lib/actions/answer.actions";
 import { viewQuestion } from "@/lib/actions/interaction.action";
 import { auth } from "@clerk/nextjs/server";
 import Swal from "sweetalert2";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   type: string;
@@ -141,7 +142,7 @@ const Votes = ({
         popup: "bg-blue-500 text-black p-4 rounded-lg shadow-lg", // Custom styling for the popup
         title: "font-bold text-lg", // Title styling
         confirmButton: "bg-primary-500 text-white px-4 py-2 rounded-lg", // Confirm button styling
-        cancelButton: "bg-red-500 text-black px-4 py-2 rounded-lg", // Cancel button styling
+        cancelButton: "bg-black-500 text-white px-4 py-2 rounded-lg", // Cancel button styling
       },
     }).then((result) => {
       if (result.isConfirmed) {

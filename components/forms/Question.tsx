@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-custom-classname */
 "use client";
 import React, { useRef } from "react";
 import { Input } from "../ui/input";
@@ -22,6 +23,7 @@ import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useTheme } from "@/context/ThemeProvider";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   mongoUserId: string;
@@ -73,6 +75,9 @@ const Question = ({ mongoUserId, formType, question }: Props) => {
         });
         router.push(`/question/${parsedQuestion._id}`);
       }
+      return toast({
+        title: `Question ${type === "create" ? "created" : "edited"} successfully`,
+      });
     } catch (error) {
       console.error(error);
     } finally {

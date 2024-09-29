@@ -10,7 +10,11 @@ import { Filters } from "@/components/shared/Filters";
 import { UserFilters } from "@/constants/filters";
 import { SearchParamsProps } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
+import type { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Community | TechFlow",
+};
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const result = await getUsers({
     searchQuery: searchParams.q,
