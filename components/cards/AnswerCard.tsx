@@ -26,7 +26,7 @@ const AnswerCard: React.FC<Props> = ({
   upvotes,
 }) => {
   const { createdAtValue, dateFormat } = getTimeStamp(createdAt);
-  const showActionButtons = clerkID && JSON.parse(clerkID) === author.clerkID;
+  const showActionButtons = clerkID && clerkID === author.clerkID;
 
   return (
     <Link
