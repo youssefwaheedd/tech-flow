@@ -211,7 +211,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
               <AnswerTab
                 searchParams={searchParams}
                 userId={user._id}
-                clerkID={JSON.stringify(user.clerkID)}
+                clerkID={userId}
               />
             ) : (
               {

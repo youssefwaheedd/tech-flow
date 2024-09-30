@@ -5,7 +5,7 @@ import PaginationComponent from "../shared/PaginationComponent";
 
 interface Props extends SearchParamsProps {
   userId: string;
-  clerkID: string;
+  clerkID: string | null;
 }
 
 const AnswerTab = async ({ searchParams, userId, clerkID }: Props) => {
