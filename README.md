@@ -35,7 +35,7 @@ TechFlow an intuitive platform designed for users to engage in a dynamic Q&A exp
    git clone https://github.com/youssefwaheedd/tech-flow.git
 2. Navigate to the project directory:
    ```bash
-   cd dev-flow
+   cd dev-overflow
 3. Install dependencies:
    ```bash
    npm install
