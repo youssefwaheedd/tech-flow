@@ -1,6 +1,6 @@
 # TechFlow
 
-**TechFlow** - Share & Answer questions 🚀
+**TechFlow** - Share & Answer questions 
 
 ## 📝 Overview
 
